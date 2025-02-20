@@ -45,9 +45,6 @@ public class ModModel
     /// <summary>A unique identifier for the mod that can be used in an anchor URL.</summary>
     public string? Slug { get; }
 
-    /// <summary>The sites where the mod can be downloaded.</summary>
-    public string[] ModPageSites => this.ModPages.Select(p => p.Text).ToArray();
-
 
     /*********
     ** Public methods

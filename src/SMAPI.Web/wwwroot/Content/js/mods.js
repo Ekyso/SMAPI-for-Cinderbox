@@ -71,8 +71,6 @@ smapi.modList = function (mods) {
         mod.SearchableText = [mod.Name, mod.AlternateNames, mod.Author, mod.AlternateAuthors, mod.Compatibility.Summary, mod.BrokeIn];
         if (mod.Compatibility.UnofficialVersion)
             mod.SearchableText.push(mod.Compatibility.UnofficialVersion);
-        for (var p = 0; p < mod.ModPages; p++)
-            mod.SearchableField.push(mod.ModPages[p].Text);
         mod.SearchableText = mod.SearchableText.join(" ").toLowerCase();
     }
 
@@ -140,7 +138,7 @@ smapi.modList = function (mods) {
              * Get whether a mod matches the current filters.
              * @param {object} mod The mod to check.
              * @param {string[]} searchWords The search words to match.
-             * @returns {bool} Whether the mod matches the filters.
+             * @returns {boolean} Whether the mod matches the filters.
              */
             matchesFilters: function (mod, searchWords) {
                 var filters = data.filters;
@@ -176,8 +174,8 @@ smapi.modList = function (mods) {
 
                 if (ignoreSites.length) {
                     var anyLeft = false;
-                    for (var i = 0; i < mod.ModPageSites.length; i++) {
-                        if (ignoreSites.indexOf(mod.ModPageSites[i]) === -1) {
+                    for (var i = 0; i < mod.ModPages.length; i++) {
+                        if (ignoreSites.indexOf(mod.ModPages[i].Text) === -1) {
                             anyLeft = true;
                             break;
                         }
