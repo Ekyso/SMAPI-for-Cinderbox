@@ -5,6 +5,7 @@
 * For players:
   * Fixed `log_context` command not disabling the extra logs when run again.
   * Fixed update alerts when using an unofficial port of SMAPI with a four-part version number.
+  * Fixed installer on Linux not always opening a terminal as intended (thanks to HoodedDeath!).
   * Updated compatibility list.
 
 * For mod authors:
