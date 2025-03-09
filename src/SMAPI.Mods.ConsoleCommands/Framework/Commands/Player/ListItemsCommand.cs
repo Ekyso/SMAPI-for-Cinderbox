@@ -40,7 +40,7 @@ internal class ListItemsCommand : ConsoleCommand
         SearchableItem[] matches =
             (
                 from item in this.GetItems(args.ToArray())
-                orderby item.Type.ToString(), item.Name
+                orderby item.Type, item.Name
                 select item
             )
             .ToArray();
