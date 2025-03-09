@@ -295,12 +295,11 @@ internal class AssemblyLoader : IDisposable
         }
 
         // skip if already visited
-        if (visitedAssemblyNames.Contains(assembly.Name.Name))
+        if (!visitedAssemblyNames.Add(assembly.Name.Name))
         {
             yield return new AssemblyParseResult(file, null, AssemblyLoadStatus.AlreadyLoaded);
             yield break;
         }
-        visitedAssemblyNames.Add(assembly.Name.Name);
 
         // yield referenced assemblies
         foreach (AssemblyNameReference dependency in assembly.MainModule.AssemblyReferences)

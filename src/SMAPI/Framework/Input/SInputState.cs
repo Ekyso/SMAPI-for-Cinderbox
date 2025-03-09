@@ -267,8 +267,8 @@ internal sealed class SInputState : InputState
         // handle released keys
         foreach (KeyValuePair<SButton, SButtonState> prev in previousStates)
         {
-            if (prev.Value.IsDown() && !activeButtons.ContainsKey(prev.Key))
-                activeButtons[prev.Key] = SButtonState.Released;
+            if (prev.Value.IsDown())
+                activeButtons.TryAdd(prev.Key, SButtonState.Released);
         }
 
         return activeButtons;
