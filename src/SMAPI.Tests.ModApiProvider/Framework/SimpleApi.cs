@@ -105,7 +105,7 @@ public class SimpleApi : BaseApi
         outReference = new PerScreen<int>(() => inputNumber);
         outComplexType = new Dictionary<int, PerScreen<int>>
         {
-            [inputNumber] = new PerScreen<int>(() => inputNumber)
+            [inputNumber] = new(() => inputNumber)
         };
 
         return true;

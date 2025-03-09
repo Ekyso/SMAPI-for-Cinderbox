@@ -108,7 +108,7 @@ public class ChangeDescriptor
         // add values
         if (this.Add.Any())
         {
-            HashSet<string> curValues = new HashSet<string>(values.Select(p => p.Trim()), StringComparer.OrdinalIgnoreCase);
+            HashSet<string> curValues = new(values.Select(p => p.Trim()), StringComparer.OrdinalIgnoreCase);
             foreach (string add in this.Add)
             {
                 if (!curValues.Contains(add))
@@ -126,7 +126,7 @@ public class ChangeDescriptor
         if (!this.HasChanges)
             return string.Empty;
 
-        List<string> descriptors = new List<string>(this.Add.Count + this.Remove.Count + this.Replace.Count);
+        List<string> descriptors = new(this.Add.Count + this.Remove.Count + this.Replace.Count);
         foreach (string add in this.Add)
             descriptors.Add($"+{add}");
         foreach (string remove in this.Remove)

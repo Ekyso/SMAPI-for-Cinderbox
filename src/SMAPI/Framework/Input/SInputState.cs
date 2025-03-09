@@ -74,7 +74,7 @@ internal sealed class SInputState : InputState
             var mouse = new MouseStateBuilder(base.GetMouseState());
             Vector2 cursorAbsolutePos = new((mouse.X * zoomMultiplier) + Game1.viewport.X, (mouse.Y * zoomMultiplier) + Game1.viewport.Y);
             Vector2? playerTilePos = Context.IsPlayerFree ? Game1.player.Tile : null;
-            HashSet<SButton> reallyDown = new HashSet<SButton>(this.GetPressedButtons(keyboard, mouse, controller));
+            HashSet<SButton> reallyDown = new(this.GetPressedButtons(keyboard, mouse, controller));
 
             // apply overrides
             bool hasOverrides = false;
@@ -94,7 +94,7 @@ internal sealed class SInputState : InputState
 
             // get button states
             var pressedButtons = hasOverrides
-                ? new HashSet<SButton>(this.GetPressedButtons(keyboard, mouse, controller))
+                ? new(this.GetPressedButtons(keyboard, mouse, controller))
                 : reallyDown;
             var activeButtons = this.DeriveStates(this.ButtonStates, pressedButtons);
 

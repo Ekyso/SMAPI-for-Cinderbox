@@ -95,7 +95,7 @@ internal class LogParserController : Controller
         // note: avoid this.Request.Form, which fails if any mod logged a null character.
         string? input;
         {
-            using StreamReader reader = new StreamReader(this.Request.Body);
+            using StreamReader reader = new(this.Request.Body);
             NameValueCollection parsed = HttpUtility.ParseQueryString(await reader.ReadToEndAsync());
             input = parsed["input"];
             if (string.IsNullOrWhiteSpace(input))

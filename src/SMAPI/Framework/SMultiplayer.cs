@@ -502,7 +502,7 @@ internal class SMultiplayer : Multiplayer
         }
 
         // get player IDs
-        HashSet<long> playerIds = new HashSet<long>(model.ToPlayerIds ?? this.GetKnownPlayerIds());
+        HashSet<long> playerIds = new(model.ToPlayerIds ?? this.GetKnownPlayerIds());
 
         // notify local mods
         if (playerIds.Contains(Game1.player.UniqueMultiplayerID))

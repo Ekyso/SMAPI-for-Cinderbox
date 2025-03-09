@@ -187,7 +187,7 @@ static class MiniMonoModHotfix
     private static void _FixReflectionCacheOrder<T>(Array orig) where T : MemberInfo
     {
         // Sort using a short-lived list.
-        List<T> list = new List<T>(orig.Length);
+        List<T> list = new(orig.Length);
         for (int i = 0; i < orig.Length; i++)
             list.Add((T)orig.GetValue(i)!);
 
