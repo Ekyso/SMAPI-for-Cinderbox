@@ -24,6 +24,18 @@ public class TranslationTests
     /// <summary>Sample translation text for unit tests.</summary>
     public static string?[] Samples = [null, "", "  ", "boop", "  boop  "];
 
+    /// <summary>The locale to check for unit tests.</summary>
+    public const string TestLocale = "en";
+
+    /// <summary>A translation key which exists in both <c>default.json</c> and <c>en.json</c>.</summary>
+    public const string DefaultAndLocalKey = "key A";
+
+    /// <summary>A translation key which only exists in <c>en.json</c>.</summary>
+    public const string LocalKey = "key B";
+
+    /// <summary>A translation key which only exists in <c>default.json</c>.</summary>
+    public const string DefaultKey = "key C";
+
 
     /*********
     ** Unit tests
@@ -36,14 +48,14 @@ public class TranslationTests
     {
         // arrange
         var data = new Dictionary<string, IDictionary<string, string>>();
+        ITranslationHelper helper = this.GetSampleHelper(data);
 
         // act
-        ITranslationHelper helper = new TranslationHelper(this.CreateModMetadata(), "en", LocalizedContentManager.LanguageCode.en).SetTranslations(data);
         Translation translation = helper.Get("key");
-        Translation[]? translationList = helper.GetTranslations()?.ToArray();
+        Translation[] translationList = helper.GetTranslations().ToArray();
 
         // assert
-        helper.Locale.Should().Be("en");
+        helper.Locale.Should().Be(TranslationTests.TestLocale);
         helper.LocaleEnum.Should().Be(LocalizedContentManager.LanguageCode.en);
         translationList.Should().NotBeNull().And.BeEmpty();
 
@@ -51,20 +63,47 @@ public class TranslationTests
         translation.ToString().Should().Be(this.GetPlaceholderText("key"));
     }
 
+    [Test(Description = $"Assert that {nameof(ITranslationHelper.ContainsKey)} returns the expected value.")]
+    [TestCase(TranslationTests.DefaultAndLocalKey, ExpectedResult = true)]
+    [TestCase(TranslationTests.LocalKey, ExpectedResult = true)]
+    [TestCase(TranslationTests.DefaultKey, ExpectedResult = true)]
+    [TestCase("missing-key", ExpectedResult = false)]
+    public bool Helper_ContainsKey(string key)
+    {
+        // arrange
+        ITranslationHelper helper = this.GetSampleHelper();
+
+        // act & assert
+        return helper.ContainsKey(key);
+    }
+
+    [Test(Description = $"Assert that {nameof(ITranslationHelper.GetKeys)} returns the expected keys.")]
+    public void Helper_GetKeys()
+    {
+        // arrange
+        string[] expectedKeys = [TranslationTests.DefaultKey, TranslationTests.DefaultAndLocalKey, TranslationTests.LocalKey];
+        ITranslationHelper helper = this.GetSampleHelper();
+
+        // act
+        IEnumerable<string> actualKeys = helper.GetKeys();
+
+        // assert
+        actualKeys.Should().BeEquivalentTo(expectedKeys);
+    }
+
     [Test(Description = "Assert that the translation helper returns the expected translations correctly.")]
     public void Helper_GetTranslations_ReturnsExpectedText()
     {
         // arrange
-        var data = this.GetSampleData();
         var expected = this.GetExpectedTranslations();
+        TranslationHelper helper = this.GetSampleHelper();
 
         // act
         var actual = new Dictionary<string, Translation[]?>();
-        TranslationHelper helper = new TranslationHelper(this.CreateModMetadata(), "en", LocalizedContentManager.LanguageCode.en).SetTranslations(data);
         foreach (string locale in expected.Keys)
         {
             this.AssertSetLocale(helper, locale, LocalizedContentManager.LanguageCode.en);
-            actual[locale] = helper.GetTranslations()?.ToArray();
+            actual[locale] = helper.GetTranslations().ToArray();
         }
 
         // assert
@@ -80,12 +119,11 @@ public class TranslationTests
     public void Helper_Get_ReturnsExpectedText()
     {
         // arrange
-        var data = this.GetSampleData();
         var expected = this.GetExpectedTranslations();
+        TranslationHelper helper = this.GetSampleHelper();
 
         // act
         var actual = new Dictionary<string, Translation[]>();
-        TranslationHelper helper = new TranslationHelper(this.CreateModMetadata(), "en", LocalizedContentManager.LanguageCode.en).SetTranslations(data);
         foreach (string locale in expected.Keys)
         {
             this.AssertSetLocale(helper, locale, LocalizedContentManager.LanguageCode.en);
@@ -317,18 +355,18 @@ public class TranslationTests
         {
             ["default"] = new Dictionary<string, string>
             {
-                ["key A"] = "default A",
-                ["key C"] = "default C"
+                [TranslationTests.DefaultAndLocalKey] = "default A",
+                [TranslationTests.DefaultKey] = "default C"
             },
-            ["en"] = new Dictionary<string, string>
+            [TranslationTests.TestLocale] = new Dictionary<string, string>
             {
-                ["key A"] = "en A",
-                ["key B"] = "en B"
+                [TranslationTests.DefaultAndLocalKey] = "en A",
+                [TranslationTests.LocalKey] = "en B"
             },
             ["en-US"] = new Dictionary<string, string>(),
             ["zzz"] = new Dictionary<string, string>
             {
-                ["key A"] = "zzz A"
+                [TranslationTests.DefaultAndLocalKey] = "zzz A"
             }
         };
     }
@@ -340,23 +378,36 @@ public class TranslationTests
         {
             ["default"] =
             [
-                new Translation("default", "key A", "default A"),
-                new Translation("default", "key C", "default C")
+                new Translation("default", TranslationTests.DefaultAndLocalKey, "default A"),
+                new Translation("default", TranslationTests.DefaultKey, "default C")
             ],
-            ["en"] =
+            [TranslationTests.TestLocale] =
             [
-                new Translation("en", "key A", "en A"),
-                new Translation("en", "key B", "en B"),
-                new Translation("en", "key C", "default C")
+                new Translation(TranslationTests.TestLocale, TranslationTests.DefaultAndLocalKey, "en A"),
+                new Translation(TranslationTests.TestLocale, TranslationTests.LocalKey, "en B"),
+                new Translation(TranslationTests.TestLocale, TranslationTests.DefaultKey, "default C")
             ],
             ["zzz"] =
             [
-                new Translation("zzz", "key A", "zzz A"),
-                new Translation("zzz", "key C", "default C")
+                new Translation("zzz", TranslationTests.DefaultAndLocalKey, "zzz A"),
+                new Translation("zzz", TranslationTests.DefaultKey, "default C")
             ]
         };
-        expected["en-us"] = expected["en"].ToArray();
+        expected["en-us"] = expected[TranslationTests.TestLocale].ToArray();
         return expected;
+    }
+
+    /// <summary>Get a translation helper with sample data matching <see cref="GetSampleData"/>.</summary>
+    private TranslationHelper GetSampleHelper()
+    {
+        return this.GetSampleHelper(this.GetSampleData());
+    }
+
+    /// <summary>Get a translation helper with sample data matching <see cref="GetSampleData"/>.</summary>
+    /// <param name="data">The translation data to use.</param>
+    private TranslationHelper GetSampleHelper(IDictionary<string, IDictionary<string, string>> data)
+    {
+        return new TranslationHelper(this.CreateModMetadata(), TranslationTests.TestLocale, LocalizedContentManager.LanguageCode.en).SetTranslations(data);
     }
 
     /// <summary>Get the default placeholder text when a translation is missing.</summary>

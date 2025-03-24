@@ -10,6 +10,7 @@
 
 * For mod authors:
   * Mod events are now raised on the shipping menu (except when it's actually saving).
+  * Added translation API methods to query translation keys (`ContainsKey` and `GetKeys`).
   * Fixed the game's `Data/ChairTiles` logic not handling unique string IDs like `Maps/Author.ModName` correctly.
   * Fixed exception thrown if `modRegistry.GetApi<T>` can't proxy the API to the given interface. It now logs an error and returns null as intended.
 
