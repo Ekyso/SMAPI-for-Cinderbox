@@ -255,8 +255,8 @@ internal class InstructionMetadata
                 .MapFacade<SObject, ObjectFacade>()
                 .MapFacade<SoundEffect, SoundEffectFacade>()
                 .MapFacade<SpriteText, SpriteTextFacade>()
-                .MapFacade<Stats, StatsFacade_160>()
-                .MapFacade<Stats, StatsFacade_1615>()
+                .MapFacade<Stats, Stats_160_Facade>()
+                .MapFacade<Stats, Stats_1615_Facade>()
                 .MapFacade<StorageFurniture, StorageFurnitureFacade>()
                 .MapFacade<TemporaryAnimatedSprite, TemporaryAnimatedSpriteFacade>()
                 .MapFacade<TerrainFeature, TerrainFeatureFacade>()
@@ -313,8 +313,8 @@ internal class InstructionMetadata
         yield return new ReferenceToInvalidMemberFinder(this.ValidateReferencesToAssemblies, logTechnicalDetailsForBrokenMods);
 
         // code which may impact game stability
-        yield return new FieldFinder(typeof(SaveGame).FullName!, new[] { nameof(SaveGame.serializer), nameof(SaveGame.farmerSerializer), nameof(SaveGame.locationSerializer) }, InstructionHandleResult.DetectedSaveSerializer);
-        yield return new EventFinder(typeof(ISpecializedEvents).FullName!, new[] { nameof(ISpecializedEvents.UnvalidatedUpdateTicked), nameof(ISpecializedEvents.UnvalidatedUpdateTicking) }, InstructionHandleResult.DetectedUnvalidatedUpdateTick);
+        yield return new FieldFinder(typeof(SaveGame).FullName!, [nameof(SaveGame.serializer), nameof(SaveGame.farmerSerializer), nameof(SaveGame.locationSerializer)], InstructionHandleResult.DetectedSaveSerializer);
+        yield return new EventFinder(typeof(ISpecializedEvents).FullName!, [nameof(ISpecializedEvents.UnvalidatedUpdateTicked), nameof(ISpecializedEvents.UnvalidatedUpdateTicking)], InstructionHandleResult.DetectedUnvalidatedUpdateTick);
 
         // direct console access
         yield return new TypeFinder(typeof(System.Console).FullName!, InstructionHandleResult.DetectedConsoleAccess);
@@ -324,8 +324,7 @@ internal class InstructionMetadata
         {
             // filesystem access
             yield return new TypeFinder(
-                new[]
-                {
+                [
                     typeof(System.IO.File).FullName!,
                     typeof(System.IO.FileStream).FullName!,
                     typeof(System.IO.FileInfo).FullName!,
@@ -333,7 +332,7 @@ internal class InstructionMetadata
                     typeof(System.IO.DirectoryInfo).FullName!,
                     typeof(System.IO.DriveInfo).FullName!,
                     typeof(System.IO.FileSystemWatcher).FullName!
-                },
+                ],
                 InstructionHandleResult.DetectedFilesystemAccess
             );
 
