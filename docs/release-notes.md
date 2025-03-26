@@ -2,6 +2,8 @@
 
 # Release notes
 ## Upcoming release
+Released 25 March 2025 for Stardew Valley 1.6.14 or later.
+
 * For players:
   * Fixed crash when some mods' custom tiles are on-screen.
 
