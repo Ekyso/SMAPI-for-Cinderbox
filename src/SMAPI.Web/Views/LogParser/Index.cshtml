@@ -36,16 +36,24 @@
     {
         <meta name="robots" content="noindex" />
     }
+
+    <!-- jQuery -->
+    <script src="@Url.ContentWithCacheBust("~/Content/lib/jquery/dist/jquery.min.js")"></script>
+
+    <!-- Tabby -->
+    <link rel="stylesheet" href="@Url.ContentWithCacheBust("~/Content/lib/tabbyjs/dist/css/tabby-ui-vertical.min.css")" />
+    <script src="@Url.ContentWithCacheBust("~/Content/lib/tabbyjs/dist/js/tabby.polyfills.min.js")"></script>
+
+    <!-- Vue -->
+    <script src="@Url.ContentWithCacheBust("~/Content/lib/vue/dist/vue.min.js")"></script>
+
+    <!-- page CSS/JS -->
     <link rel="stylesheet" href="@Url.ContentWithCacheBust("~/Content/css/file-upload.css")" />
     <link rel="stylesheet" href="@Url.ContentWithCacheBust("~/Content/css/log-parser.css")" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tabbyjs@12.0.3/dist/css/tabby-ui-vertical.min.css" />
-
-    <script src="https://cdn.jsdelivr.net/npm/tabbyjs@12.0.3" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1" crossorigin="anonymous"></script>
     <script src="@Url.ContentWithCacheBust("~/Content/js/file-upload.js")"></script>
     <script src="@Url.ContentWithCacheBust("~/Content/js/log-parser.js")"></script>
 
+    <!-- init -->
     <script id="serializedData" type="application/json">
         @if (!Model.ShowRaw)
         {

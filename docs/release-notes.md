@@ -8,6 +8,7 @@
     * You can now hover and click 'Copy' on the top-right to copy the full code to the clipboard.
     * Updated to newer syntax highlighting library.
     * Fixed some JSON files breaking page layout.
+  * Third-party libraries are now served from `smapi.io` instead of external CDNs.
   * Removed support for very old SMAPI logs.
 
 ## 4.2.1
