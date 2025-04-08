@@ -110,9 +110,19 @@ internal class JsonValidatorController : Controller
             }
 
             // format JSON
-            string formatted = parsed.ToString(Formatting.Indented);
-            result.SetContent(formatted, oldExpiry: file.OldExpiry, newExpiry: file.NewExpiry, uploadWarning: file.Warning);
-            parsed = JToken.Parse(formatted); // update line number references
+            try
+            {
+                string formatted = parsed.ToString(Formatting.Indented);
+                result.SetContent(formatted, oldExpiry: file.OldExpiry, newExpiry: file.NewExpiry, uploadWarning: file.Warning);
+                parsed = JToken.Parse(formatted); // update line number references
+            }
+            catch
+            {
+                // In rare cases, Json.NET will convert valid JSON to invalid JSON. For example,
+                // it will change `// remove /* */` to /*remove /* */*/` so it can't be parsed
+                // anymore. If that happens, just keep the JSON as-is; at worst line numbers will
+                // be slightly off if there are schema errors.
+            }
         }
 
         // skip if no schema selected
