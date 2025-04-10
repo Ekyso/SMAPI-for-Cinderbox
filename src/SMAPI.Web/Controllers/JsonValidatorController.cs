@@ -170,7 +170,7 @@ internal class JsonValidatorController : Controller
 
         // upload file
         string id = Guid.NewGuid().ToString("N");
-        UploadResult result = await this.Storage.SaveAsync(id, input);
+        UploadResult result = await this.Storage.SaveAsync(id, input, "application/json");
         if (!result.Succeeded)
             return this.View("Index", this.GetModel(id, schemaName, isEditView: true).SetContent(input, null, null).SetUploadError(result.UploadError));
 

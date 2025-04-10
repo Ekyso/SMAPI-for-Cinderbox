@@ -135,7 +135,7 @@ internal class LogParserController : Controller
 
         // upload log
         string id = Guid.NewGuid().ToString("N");
-        UploadResult uploadResult = await this.Storage.SaveAsync($"parsed-{id}", JsonConvert.SerializeObject(log));
+        UploadResult uploadResult = await this.Storage.SaveAsync($"parsed-{id}", JsonConvert.SerializeObject(log), "application/json");
         if (!uploadResult.Succeeded)
             return this.View("Index", this.GetModel(null, uploadError: uploadResult.UploadError));
 

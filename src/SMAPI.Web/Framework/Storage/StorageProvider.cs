@@ -54,7 +54,7 @@ internal class StorageProvider : IStorageProvider
     }
 
     /// <inheritdoc />
-    public async Task<UploadResult> SaveAsync(string id, string content, bool compress = true)
+    public async Task<UploadResult> SaveAsync(string id, string content, string contentType, bool compress = true)
     {
         // save to Azure
         if (this.HasAzure)
@@ -63,7 +63,7 @@ internal class StorageProvider : IStorageProvider
             {
                 await using Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
                 BlobClient blob = this.GetAzureBlobClient(id);
-                await blob.UploadAsync(stream);
+                await blob.UploadAsync(stream, new BlobHttpHeaders { ContentType = contentType });
 
                 return new UploadResult(id, null);
             }
