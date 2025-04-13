@@ -354,16 +354,9 @@
                 </td>
 
                 @* error summary *@
-                <td v-if="mod.Loaded && !mod.Errors" class="color-green">no errors</td>
-                <td v-else-if="!mod.Loaded" class="color-red">
-                    <template v-if="!mod.Errors">failed to load</template>
-                    <template v-else-if="mod.Errors == 1">failed to load + 1 error</template>
-                    <template v-else>failed to load + {{mod.Errors}} errors</template>
-                </td>
-                <template v-else class="color-red">
-                    <template v-if="mod.Errors == 1">1 error</template>
-                    <template v-else>{{mod.Errors}} errors</template>
-                </template>
+                <td v-if="!mod.Loaded" class="has-errors">failed to load</td>
+                <td v-else-if="mod.Errors" class="has-errors">{{mod.Errors}} {{mod.Errors == 1 ? "error" : "errors"}}</td>
+                <td v-else class="no-errors">no errors</td>
             </tr>
         </table>
 
