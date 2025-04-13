@@ -1,7 +1,9 @@
 &larr; [mod build config](./mod-build-config.md)
 
 ## Release notes
-## Upcoming release
+## 4.4.0
+Released 13 April 2025 for SMAPI 4.1.0 or later.
+
 * Added `%ProjectVersion%` [token you can use in `manifest.json` files](mod-package.md#manifest-tokens).
 * Revamped [package documentation](mod-package.md).  
   _This makes it easier to see the features at a glance, and collects the info for each feature into one place._
