@@ -92,10 +92,10 @@ public class DeployModTask : Task
         {
             try
             {
-                string manifestPath = Path.Combine(this.ProjectDir, "manifest.json");
+                string manifestPath = Path.Combine(this.ProjectDir, BundleFile.ManifestFileName);
                 if (!new JsonHelper().ReadJsonFileIfExists(manifestPath, out Manifest rawManifest))
                 {
-                    this.Log.LogError("[mod build package] The mod's manifest.json file doesn't exist.");
+                    this.Log.LogError($"[mod build package] The mod's {BundleFile.ManifestFileName} file doesn't exist.");
                     return false;
                 }
                 manifest = rawManifest;
@@ -104,14 +104,14 @@ public class DeployModTask : Task
             {
                 // log the inner exception, otherwise the message will be generic
                 Exception exToShow = ex.InnerException ?? ex;
-                this.Log.LogError($"[mod build package] The mod's manifest.json file isn't valid JSON: {exToShow.Message}");
+                this.Log.LogError($"[mod build package] The mod's {BundleFile.ManifestFileName} file isn't valid JSON: {exToShow.Message}");
                 return false;
             }
 
             // validate manifest fields
             if (!ManifestValidator.TryValidateFields(manifest, out string error))
             {
-                this.Log.LogError($"[mod build package] The mod's manifest.json file is invalid: {error}");
+                this.Log.LogError($"[mod build package] The mod's {BundleFile.ManifestFileName} file is invalid: {error}");
                 return false;
             }
         }
@@ -301,19 +301,12 @@ public class DeployModTask : Task
     {
         foreach (var mod in modPackages)
         {
-            string relativePath = modPackages.Count == 1
+            string folderPath = modPackages.Count == 1
                 ? outputPath
                 : Path.Combine(outputPath, this.EscapeInvalidFilenameCharacters(mod.Key));
 
-            foreach (var file in mod.Value.GetFiles())
-            {
-                string fromPath = file.Value.FullName;
-                string toPath = Path.Combine(relativePath, file.Key);
-
-                Directory.CreateDirectory(Path.GetDirectoryName(toPath)!);
-
-                File.Copy(fromPath, toPath, overwrite: true);
-            }
+            foreach (BundleFile from in mod.Value.GetFiles())
+                from.CopyToFolder(folderPath);
         }
     }
 
@@ -330,21 +323,19 @@ public class DeployModTask : Task
         foreach (var mod in modPackages)
         {
             string modFolder = this.EscapeInvalidFilenameCharacters(mod.Key);
-            foreach (var file in mod.Value.GetFiles())
+            foreach (BundleFile from in mod.Value.GetFiles())
             {
-                string relativePath = file.Key;
+                string relativePath = from.RelativePath;
+
                 if (relativePath.Contains('\\'))
                     relativePath = string.Join("/", PathUtilities.GetSegments(relativePath)); // zip files use forward slashes regardless of OS
-
-                FileInfo fileInfo = file.Value;
 
                 string archivePath = modPackages.Count == 1
                     ? $"{modFolder}/{relativePath}"
                     : $"{this.ModFolderName}/{modFolder}/{relativePath}";
 
-                using Stream fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read);
                 using Stream fileStreamInZip = archive.CreateEntry(archivePath).Open();
-                fileStream.CopyTo(fileStreamInZip);
+                from.CopyToStream(fileStreamInZip);
             }
         }
     }

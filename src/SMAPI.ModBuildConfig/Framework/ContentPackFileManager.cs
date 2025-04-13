@@ -18,11 +18,8 @@ internal class ContentPackFileManager : IModFileManager
     /*********
     ** Fields
     *********/
-    /// <summary>The name of the manifest file.</summary>
-    private readonly string ManifestFileName = "manifest.json";
-
     /// <summary>The files that are part of the package.</summary>
-    private readonly Dictionary<string, FileInfo> Files = new(StringComparer.OrdinalIgnoreCase);
+    private readonly List<BundleFile> Files = [];
 
 
     /*********
@@ -44,37 +41,43 @@ internal class ContentPackFileManager : IModFileManager
             throw GetError($"that folder doesn't exist at {projectDirInfo.FullName}");
 
         // collect files
-        foreach (FileInfo entry in projectDirInfo.GetFiles("*", SearchOption.AllDirectories))
+        BundleFile manifestEntry = null;
+        foreach (FileInfo file in projectDirInfo.GetFiles("*", SearchOption.AllDirectories))
         {
-            string relativePath = PathUtilities.GetRelativePath(projectDirInfo.FullName, entry.FullName);
-            FileInfo file = entry;
+            string relativePath = PathUtilities.GetRelativePath(projectDirInfo.FullName, file.FullName);
 
             if (!this.ShouldIgnore(file, relativePath, ignoreFilePaths, ignoreFilePatterns))
-                this.Files[relativePath] = file;
+            {
+                BundleFile entry = new(relativePath, file);
+                this.Files.Add(entry);
+
+                if (manifestEntry is null && entry.IsModManifest())
+                    manifestEntry = entry;
+            }
         }
 
         // validate manifest
         if (validateManifest)
         {
             // get manifest file
-            if (!this.Files.TryGetValue(this.ManifestFileName, out FileInfo manifestFile))
-                throw GetError($"it has no {this.ManifestFileName} file");
+            if (manifestEntry is null)
+                throw GetError($"it has no {BundleFile.ManifestFileName} file");
 
             // parse file
             Manifest manifest;
             try
             {
-                new JsonHelper().ReadJsonFileIfExists(manifestFile.FullName, out Manifest rawManifest);
+                new JsonHelper().ReadJsonFileIfExists(manifestEntry.File.FullName, out Manifest rawManifest);
                 manifest = rawManifest;
             }
             catch (JsonReaderException ex)
             {
-                throw GetError($"its {this.ManifestFileName} file isn't valid JSON: {ex.InnerException?.Message ?? ex.Message}");
+                throw GetError($"its {BundleFile.ManifestFileName} file isn't valid JSON: {ex.InnerException?.Message ?? ex.Message}");
             }
 
             // validate manifest fields
             if (!ManifestValidator.TryValidateFields(manifest, out string error))
-                throw GetError($"its {this.ManifestFileName} file is invalid: {error}");
+                throw GetError($"its {BundleFile.ManifestFileName} file is invalid: {error}");
 
             // validate version
             if (version == null)
@@ -82,7 +85,7 @@ internal class ContentPackFileManager : IModFileManager
             if (!SemanticVersion.TryParse(version, out ISemanticVersion requiredVersion))
                 throw GetError($"the provided Version value '{version}' isn't a valid semantic version");
             if (manifest.Version.CompareTo(requiredVersion) != 0)
-                throw GetError($"its {this.ManifestFileName} has version '{manifest.Version}' instead of the required '{requiredVersion}'");
+                throw GetError($"its {BundleFile.ManifestFileName} has version '{manifest.Version}' instead of the required '{requiredVersion}'");
         }
 
         UserErrorException GetError(string reasonPhrase)
@@ -92,9 +95,9 @@ internal class ContentPackFileManager : IModFileManager
     }
 
     ///<inheritdoc/>
-    public IDictionary<string, FileInfo> GetFiles()
+    public IEnumerable<BundleFile> GetFiles()
     {
-        return new Dictionary<string, FileInfo>(this.Files, StringComparer.OrdinalIgnoreCase);
+        return this.Files;
     }
 
     /// <summary>Get whether a content file should be ignored.</summary>

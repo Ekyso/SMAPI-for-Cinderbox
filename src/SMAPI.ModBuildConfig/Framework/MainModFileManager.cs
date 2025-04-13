@@ -13,14 +13,11 @@ internal class MainModFileManager : IModFileManager
     /*********
     ** Fields
     *********/
-    /// <summary>The name of the manifest file.</summary>
-    private readonly string ManifestFileName = "manifest.json";
-
     /// <summary>The files that are part of the package.</summary>
-    private readonly Dictionary<string, FileInfo> Files = new(StringComparer.OrdinalIgnoreCase);
+    private readonly List<BundleFile> Files = [];
 
     /// <summary>The file extensions used by assembly files.</summary>
-    private readonly ISet<string> AssemblyFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    private readonly HashSet<string> AssemblyFileExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
         ".dll",
         ".exe",
@@ -29,8 +26,8 @@ internal class MainModFileManager : IModFileManager
     };
 
     /// <summary>The DLLs which match the <see cref="ExtraAssemblyTypes.Game"/> type.</summary>
-    private readonly ISet<string> GameDllNames = new HashSet<string>
-    {
+    private readonly HashSet<string> GameDllNames =
+    [
         // SMAPI
         "0Harmony",
         "Mono.Cecil",
@@ -56,7 +53,7 @@ internal class MainModFileManager : IModFileManager
         "Steamworks.NET",
         "TextCopy",
         "xTile"
-    };
+    ];
 
 
     /*********
@@ -80,33 +77,36 @@ internal class MainModFileManager : IModFileManager
             throw new UserErrorException("Could not create mod package because no build output was found.");
 
         // collect files
-        foreach (Tuple<string, FileInfo> entry in this.GetPossibleFiles(projectDir, targetDir))
+        BundleFile manifestEntry = null;
+        foreach (BundleFile entry in this.GetPossibleFiles(projectDir, targetDir))
         {
-            string relativePath = entry.Item1;
-            FileInfo file = entry.Item2;
+            if (!this.ShouldIgnore(entry.File, entry.RelativePath, ignoreFilePaths, ignoreFilePatterns, bundleAssemblyTypes, modDllName))
+            {
+                this.Files.Add(entry);
 
-            if (!this.ShouldIgnore(file, relativePath, ignoreFilePaths, ignoreFilePatterns, bundleAssemblyTypes, modDllName))
-                this.Files[relativePath] = file;
+                if (manifestEntry is null && entry.IsModManifest())
+                    manifestEntry = entry;
+            }
         }
 
         // check for required files
         if (validateRequiredModFiles)
         {
             // manifest
-            if (!this.Files.ContainsKey(this.ManifestFileName))
-                throw new UserErrorException($"Could not create mod package because no {this.ManifestFileName} was found in the project or build output.");
+            if (manifestEntry is null)
+                throw new UserErrorException($"Could not create mod package because no {BundleFile.ManifestFileName} was found in the project or build output.");
 
             // DLL
             // ReSharper disable once SimplifyLinqExpression
-            if (!this.Files.Any(p => !p.Key.EndsWith(".dll")))
+            if (!this.Files.Any(p => !p.RelativePath.EndsWith(".dll")))
                 throw new UserErrorException("Could not create mod package because no .dll file was found in the project or build output.");
         }
     }
 
     ///<inheritdoc/>
-    public IDictionary<string, FileInfo> GetFiles()
+    public IEnumerable<BundleFile> GetFiles()
     {
-        return new Dictionary<string, FileInfo>(this.Files, StringComparer.OrdinalIgnoreCase);
+        return this.Files;
     }
 
 
@@ -117,15 +117,15 @@ internal class MainModFileManager : IModFileManager
     /// <param name="projectDir">The folder containing the project files.</param>
     /// <param name="targetDir">The folder containing the build output.</param>
     /// <returns>Returns tuples containing the relative path within the mod folder, and the file to copy to it.</returns>
-    private IEnumerable<Tuple<string, FileInfo>> GetPossibleFiles(string projectDir, string targetDir)
+    private IEnumerable<BundleFile> GetPossibleFiles(string projectDir, string targetDir)
     {
         // project manifest
         bool hasProjectManifest = false;
         {
-            FileInfo manifest = new(Path.Combine(projectDir, this.ManifestFileName));
+            FileInfo manifest = new(Path.Combine(projectDir, BundleFile.ManifestFileName));
             if (manifest.Exists)
             {
-                yield return Tuple.Create(this.ManifestFileName, manifest);
+                yield return new BundleFile(BundleFile.ManifestFileName, manifest);
                 hasProjectManifest = true;
             }
         }
@@ -138,7 +138,7 @@ internal class MainModFileManager : IModFileManager
             foreach (FileInfo file in translationsFolder.EnumerateFiles("*", SearchOption.AllDirectories))
             {
                 string relativePath = PathUtilities.GetRelativePath(projectDir, file.FullName);
-                yield return Tuple.Create(relativePath, file);
+                yield return new BundleFile(relativePath, file);
             }
             hasProjectTranslations = true;
         }
@@ -151,7 +151,7 @@ internal class MainModFileManager : IModFileManager
             foreach (FileInfo file in assetsFolder.EnumerateFiles("*", SearchOption.AllDirectories))
             {
                 string relativePath = PathUtilities.GetRelativePath(projectDir, file.FullName);
-                yield return Tuple.Create(relativePath, file);
+                yield return new BundleFile(relativePath, file);
             }
             hasAssetsFolder = true;
         }
@@ -165,7 +165,7 @@ internal class MainModFileManager : IModFileManager
             string[] segments = PathUtilities.GetSegments(relativePath);
 
             // prefer project manifest/i18n/assets files
-            if (hasProjectManifest && this.EqualsInvariant(relativePath, this.ManifestFileName))
+            if (hasProjectManifest && BundleFile.IsModManifest(relativePath))
                 continue;
             if (hasProjectTranslations && this.EqualsInvariant(segments[0], "i18n"))
                 continue;
@@ -173,7 +173,7 @@ internal class MainModFileManager : IModFileManager
                 continue;
 
             // add file
-            yield return Tuple.Create(relativePath, file);
+            yield return new BundleFile(relativePath, file);
         }
     }
 
