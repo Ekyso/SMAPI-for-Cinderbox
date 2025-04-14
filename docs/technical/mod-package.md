@@ -78,8 +78,8 @@ it.
 > <dd>
 >
 > On Windows only, use _Debug > Start Debugging_ instead to launch the game with a debugger. That
-> lets you [set breakpoints](https://docs.microsoft.com/en-us/visualstudio/debugger/using-breakpoints)
-> or [make simple changes code without needing to restart the game](https://docs.microsoft.com/en-us/visualstudio/debugger/edit-and-continue).
+> lets you [set breakpoints](https://learn.microsoft.com/en-us/visualstudio/debugger/get-started-with-breakpoints)
+> or [make simple changes code without needing to restart the game](https://learn.microsoft.com/en-us/visualstudio/debugger/hot-reload).
 >
 > (Debugging is disabled on Linux/macOS due to limitations with the Mono wrapper.)
 >
@@ -127,7 +127,7 @@ property                | effect
 `IgnoreModFilePatterns` | _(Optional)_ A list of file regex patterns to ignore (relative to the content pack's directory); see `IgnoreModFilePatterns` in the main settings. Default none.
 
 ### Manifest tokens
-It's best practices in .NET to set the code version in your `.csproj` project file. For example:
+It's best practice in .NET to set the code version in your `.csproj` project file. For example:
 ```xml
 <PropertyGroup>
     <Version>1.0.0</Version>
@@ -188,20 +188,6 @@ Warning text:
 > The '{{old field}}' field is obsolete and should be replaced with '{{new field}}'.
 
 Your code accesses a field which is obsolete or no longer works. Use the suggested field instead.
-
-</td>
-</tr>
-<tr id="wrong-processor-architecture">
-<td>Wrong processor architecture</td>
-<td>
-
-Warning text:
-> The target platform should be set to 'Any CPU' for compatibility with both 32-bit and 64-bit
-> versions of Stardew Valley (currently set to '{{current platform}}').
-
-Mods can be used in either 32-bit or 64-bit mode. Your project's target platform isn't set to the
-default 'Any CPU', so it won't work in both. You can fix it by [setting the target platform to
-'Any CPU'](https://docs.microsoft.com/en-ca/visualstudio/ide/how-to-configure-projects-to-target-platforms).
 
 </td>
 </tr>
