@@ -18,6 +18,9 @@
     * Removed support for very old SMAPI logs.
     * You can now download a JSON representation of the parsed log (see the download link at the bottom of the log page).
     * Fixed server error if a JSON file contains nested comment syntax.
+  * Improved mod compatibility list:
+    * Reduced response times with a new cache and client-side fetch.
+    * Fixed sort order for mods with non-Latin characters in the name.
   * Third-party libraries are now served from `smapi.io` instead of external CDNs.
 
 ## 4.2.1

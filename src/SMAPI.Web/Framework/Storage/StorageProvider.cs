@@ -8,6 +8,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using StardewModdingAPI.Web.Framework.Clients.Pastebin;
 using StardewModdingAPI.Web.Framework.Compression;
 using StardewModdingAPI.Web.Framework.ConfigModels;
@@ -37,6 +38,12 @@ internal class StorageProvider : IStorageProvider
 
     /// <inheritdoc cref="ApiClientsConfig.AzureBlobTempExpiryAutoRenewalDays"/>
     private int AutoRenewalDays => this.ClientsConfig.AzureBlobTempExpiryAutoRenewalDays;
+
+    /// <summary>The JSON serializer settings to use when saving JSON data to storage.</summary>
+    private JsonSerializerSettings DefaultJsonSettings = new()
+    {
+        NullValueHandling = NullValueHandling.Ignore
+    };
 
 
     /*********
@@ -85,12 +92,18 @@ internal class StorageProvider : IStorageProvider
     }
 
     /// <inheritdoc />
+    public Task<UploadResult> SaveToJsonAsync<T>(string id, T content, bool compress = true)
+    {
+        string json = JsonConvert.SerializeObject(content, this.DefaultJsonSettings);
+
+        return this.SaveAsync(id, json, "application/json", compress);
+    }
+
+    /// <inheritdoc />
     public async Task<StoredFileInfo> GetAsync(string id, bool forceRenew, bool forceDownloadContent = false)
     {
         // fetch from blob storage
-        bool isBlobStorage = id.StartsWith("parsed-")
-            ? Guid.TryParseExact(id.Substring("parsed-".Length), "N", out _)
-            : Guid.TryParseExact(id, "N", out _);
+        bool isBlobStorage = id.StartsWith("parsed-") || id == "mod-list" || Guid.TryParseExact(id, "N", out _);
         if (isBlobStorage)
         {
             // Azure Blob storage
