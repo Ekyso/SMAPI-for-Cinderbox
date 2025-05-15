@@ -10,6 +10,7 @@
     * You can now hover/click braces to highlight matching pairs.
     * You can now hover and click 'Copy' on the top-right to copy the full code to the clipboard.
     * Updated to newer syntax highlighting library.
+    * Fixed CurseForge update keys not recognized (thanks to Dunc4nNT!).
     * Fixed some JSON files breaking page layout.
   * Improved log parser:
     * Mods which failed to load are now shown in the mod list (with 'failed to load' in the error column).
