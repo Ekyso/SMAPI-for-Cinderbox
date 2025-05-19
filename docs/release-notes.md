@@ -6,6 +6,9 @@
   * Improved content load performance for non-English players.
   * Fixed some community shortcuts breaking if a mod edited the map which contains them.
 
+* For mod authors:
+  * You can now have an `en.json` translation file which overrides `default.json`.
+
 * For the web UI:
   * Improved JSON parser:
     * You can now hover/click braces to highlight matching pairs.
