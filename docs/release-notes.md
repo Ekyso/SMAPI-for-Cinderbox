@@ -8,7 +8,7 @@
 
 * For mod authors:
   * You can now have an `en.json` translation file which overrides `default.json`.
-  * Improved [Content Patcher JSON schema](technical/web.md#using-a-schema-file-directly) to allow decimal values in local tokens (thanks to rikai!).
+  * Improved [Content Patcher JSON schema](technical/web.md#using-a-schema-file-directly) to allow decimal values in local tokens (thanks to rikai!) and update for Content Patcher 2.7.0.
 
 * For the web UI:
   * Improved JSON parser:
