@@ -1429,7 +1429,7 @@ internal class SCore : IDisposable
         if (this.EventManager.ModMessageReceived.HasListeners)
         {
             // get mod IDs to notify
-            HashSet<string> modIds = new(message.ToModIds ?? this.ModRegistry.GetAll().Select(p => p.Manifest.UniqueID), StringComparer.OrdinalIgnoreCase);
+            HashSet<string> modIds = new(message.ToModIds ?? this.ModRegistry.GetAllIds(), StringComparer.OrdinalIgnoreCase);
             if (message.FromPlayerId == Game1.player?.UniqueMultiplayerID)
                 modIds.Remove(message.FromModId); // don't send a broadcast back to the sender
 

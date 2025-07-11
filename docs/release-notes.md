@@ -7,6 +7,7 @@
   * Fixed some community shortcuts breaking if a mod edited the map which contains them.
 
 * For mod authors:
+  * Added `helper.ModRegistry.GetFromNamespacedId` method to get a mod given a [standard namespaced ID](https://stardewvalleywiki.com/Modding:Common_data_field_types#Unique_string_ID) (e.g. an item ID).
   * You can now have an `en.json` translation file which overrides `default.json`.
   * Improved [Content Patcher JSON schema](technical/web.md#using-a-schema-file-directly) to allow decimal values in local tokens (thanks to rikai!) and update for Content Patcher 2.7.0.
   * Updated dependencies, including...
