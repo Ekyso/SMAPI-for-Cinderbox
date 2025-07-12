@@ -33,6 +33,7 @@
     * The Content Patcher JSON schema now allows decimal values in local tokens (thanks to rikai!).
     * The `$schema` value is no longer validated.
     * Updated Content Patcher schema for Content Patcher 2.7.0.
+    * Updated manifest schema for the new `%ProjectVersion%` value in `Version`.
   * Improved mod compatibility list:
     * Reduced response times with a new cache and client-side fetch.
     * Fixed sort order for mods with non-Latin characters in the name.

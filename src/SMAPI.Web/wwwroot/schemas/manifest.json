@@ -24,8 +24,14 @@
         },
         "Version": {
             "title": "Mod version",
-            "description": "The mod's semantic version. Make sure you update this for each release! SMAPI uses this for update checks, mod dependencies, and compatibility blacklists (if the mod breaks in a future version of the game).",
-            "$ref": "#/definitions/SemanticVersion"
+            "description": "The mod's semantic version, or '%ProjectVersion%' to use the current project's assembly version. Make sure you update this for each release! SMAPI uses this for update checks, mod dependencies, and compatibility blacklists (if the mod breaks in a future version of the game).",
+            "anyOf": [
+                { "$ref": "#/definitions/SemanticVersion" },
+                { "const": "%ProjectVersion%" }
+            ],
+            "@errorMessages": {
+                "anyOf": "Invalid Value. This must be formatted like 1.2.0 or 1.2.0-prerelease.tags (see https://semver.org/ for more info), or the exact string '%ProjectVersion%'."
+            }
         },
         "Description": {
             "title": "Mod description",
