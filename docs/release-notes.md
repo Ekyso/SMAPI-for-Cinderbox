@@ -3,6 +3,8 @@
 # Release notes
 ## Upcoming release
 * For players:
+  * Added 'malicious mod' blacklist.  
+    _Once a malicious mod has been reported, this lets us quickly block it for all players. This helps mitigate damage in case of future attacks. This feature can be disabled in the SMAPI settings if needed._
   * Improved content load performance for non-English players.
   * Fixed some community shortcuts breaking if a mod edited the map which contains them.
 
