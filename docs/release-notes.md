@@ -16,6 +16,7 @@
     * [Pintail](https://github.com/Nanoray-pl/Pintail) 2.6.1 → 2.8.1 (see [changes](https://github.com/Nanoray-pl/Pintail/blob/master/docs/release-notes.md#260)).
 
 * For the web UI:
+  * Increased default upload expiry from 30 to 60 days, to help avoid expired SMAPI logs when mod authors check messages monthly.
   * Improved JSON parser:
     * You can now hover/click braces to highlight matching pairs.
     * You can now hover and click 'Copy' on the top-right to copy the full code to the clipboard.
