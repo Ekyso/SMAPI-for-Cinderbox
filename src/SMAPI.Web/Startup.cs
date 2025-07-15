@@ -49,7 +49,7 @@ internal class Startup
     private const string BlacklistFileName = "SMAPI.blacklist.json";
 
     /// <summary>The MD5 hash for the 'malicious mods' blacklist file.</summary>
-    private Lazy<string?> BlacklistMd5Hash;
+    private readonly Lazy<string> BlacklistMd5Hash;
 
 
     /*********
