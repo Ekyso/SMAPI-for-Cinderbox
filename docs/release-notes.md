@@ -4,6 +4,7 @@
 ## Upcoming release
 * For players:
   * Added a friendly error message when the game fails to launch with a `NoSuitableGraphicsDeviceException`.
+  * Fixed crash when SMAPI tries to update the mod blacklist if ReShade is installed.
 
 ## 4.3.1
 Released 13 July 2025 for Stardew Valley 1.6.14 or later. See [release highlights](https://www.patreon.com/posts/133992196).
