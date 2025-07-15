@@ -319,6 +319,17 @@ internal class SCore : IDisposable
             this.Game.Run();
             this.Dispose(isError: false);
         }
+        catch (NoSuitableGraphicsDeviceException ex)
+        {
+            string? graphicsCardName = this.TryGetGraphicsDeviceName();
+            string suggestedFix = Constants.TargetPlatform == GamePlatform.Windows
+                ? "You can usually fix this by running SMAPI on your dedicated graphics card. See instructions here:"
+                : "See common fixes here:";
+
+            this.Monitor.Log($"Your graphics card{(graphicsCardName != null ? $" ({graphicsCardName})" : "")} isn't compatible with Stardew Valley. {suggestedFix} https://smapi.io/troubleshoot/no-suitable-gpu\n\nTechnical details:\n{ex.GetLogSummary()}", LogLevel.Error);
+            this.LogManager.PressAnyKeyToExit();
+            this.Dispose(isError: true);
+        }
         catch (Exception ex)
         {
             this.LogManager.LogFatalLaunchError(ex);
@@ -525,7 +536,7 @@ internal class SCore : IDisposable
 
         // log GPU info
 #if SMAPI_FOR_WINDOWS
-        this.Monitor.Log($"Running on GPU: {Game1.game1.GraphicsDevice?.Adapter?.Description ?? "<unknown>"}");
+        this.Monitor.Log($"Running on GPU: {this.TryGetGraphicsDeviceName() ?? "<unknown>"}");
 #endif
     }
 
@@ -2438,6 +2449,23 @@ internal class SCore : IDisposable
                 yield return new(locale, false, relativePath, file);
             }
         }
+    }
+
+    /// <summary>Get the display name for the current graphics card, if available.</summary>
+    private string? TryGetGraphicsDeviceName()
+    {
+#if SMAPI_FOR_WINDOWS
+        try
+        {
+            return Game1.game1.GraphicsDevice?.Adapter?.Description;
+        }
+        catch
+        {
+            // return null if unavailable
+        }
+#endif
+
+        return null;
     }
 
     /// <summary>Get a file lookup for the given directory.</summary>
