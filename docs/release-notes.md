@@ -7,6 +7,7 @@
 
 * For the web UI:
   * Improved Content Patcher [JSON schemas](technical/web.md#using-a-schema-file-directly):
+    * Updated for Content Patcher 2.8.0.
     * Fixed schema requiring `AddNPCWarps` instead of `AddNpcWarps`.
     * Fixed validation error if a warp field contains tokens or consecutive spaces (thanks to irocendar!).
     * Fixed validation error if a `Target` contains multiple targets (thanks to irocendar!).
