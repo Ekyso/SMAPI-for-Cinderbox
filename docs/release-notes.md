@@ -6,7 +6,11 @@
   * Fixed `player_add` and `list_items` console commands not including some newer juice items.
 
 * For the web UI:
-  * Fixed Content Patcher schema requiring `AddNPCWarps` instead of `AddNpcWarps`.
+  * Improved Content Patcher [JSON schemas](technical/web.md#using-a-schema-file-directly):
+    * Fixed schema requiring `AddNPCWarps` instead of `AddNpcWarps`.
+    * Fixed validation error if a warp field contains tokens or consecutive spaces (thanks to irocendar!).
+    * Fixed validation error if a `Target` contains multiple targets (thanks to irocendar!).
+    * Fixed `FromFile` errors like "_matches a schema that is not allowed_" (thanks to irocendar!).
 
 ## 4.3.2
 Released 14 July 2025 for Stardew Valley 1.6.14 or later. See [4.3 release highlights](https://www.patreon.com/posts/133992196).
