@@ -184,7 +184,7 @@ internal class CoreAssetPropagator
                     if (newTexture.Value is null)
                         break;
 
-                    Texture2D texture = contentManager.LoadLocalized<Texture2D>(name, language, useCache: true);
+                    Texture2D texture = contentManager.LoadLocalized<Texture2D>(name, name.LanguageCode ?? contentManager.Language, useCache: true);
                     texture.CopyFromTexture(newTexture.Value);
                     changed = true;
                 }
