@@ -18,7 +18,19 @@ internal class RegenerateBundlesCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public RegenerateBundlesCommand()
-        : base("regenerate_bundles", $"Regenerate the game's community center bundle data. WARNING: this will reset all bundle progress, and may have unintended effects if you've already completed bundles. DO NOT USE THIS unless you're absolutely sure.\n\nUsage: regenerate_bundles confirm [<type>] [ignore_seed]\nRegenerate all bundles for this save. If the <type> is set to '{string.Join("' or '", Enum.GetNames(typeof(Game1.BundleType)))}', change the bundle type for the save. If an 'ignore_seed' option is included, remixed bundles are re-randomized without using the predetermined save seed.\n\nExample: regenerate_bundles remixed confirm") { }
+        : base(
+            name: "regenerate_bundles",
+            description:
+                $"""
+                Regenerate the game's community center bundle data. WARNING: this will reset all bundle progress, and may have unintended effects if you've already completed bundles. DO NOT USE THIS unless you're absolutely sure.
+
+                Usage: regenerate_bundles confirm [<type>] [ignore_seed]
+                Regenerate all bundles for this save. If the <type> is set to '{string.Join("' or '", Enum.GetNames(typeof(Game1.BundleType)))}', change the bundle type for the save. If an 'ignore_seed' option is included, remixed bundles are re-randomized without using the predetermined save seed.
+
+                Example: regenerate_bundles remixed confirm
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>

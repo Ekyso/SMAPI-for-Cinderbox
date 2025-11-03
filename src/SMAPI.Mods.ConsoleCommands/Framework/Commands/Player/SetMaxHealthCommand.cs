@@ -13,7 +13,17 @@ internal class SetMaxHealthCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public SetMaxHealthCommand()
-        : base("player_setmaxhealth", "Sets the player's max health.\n\nUsage: player_setmaxhealth [value]\n- value: an integer amount.") { }
+        : base(
+            name: "player_setmaxhealth",
+            description:
+                """
+                Sets the player's max health.
+
+                Usage: player_setmaxhealth [value]
+                - value: an integer amount.
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>

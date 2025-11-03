@@ -20,7 +20,28 @@ internal class AddCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public AddCommand()
-        : base("player_add", AddCommand.GetDescription()) { }
+        : base(
+            name: "player_add",
+            description:
+                $"""
+                Gives the player an item.
+
+                Usage: player_add <item id> [count] [quality]
+                - item id: the item ID (use the 'list_items' command to see a list).
+                - count (optional): how many of the item to give.
+                - quality (optional): one of {Object.lowQuality} (normal), {Object.medQuality} (silver), {Object.highQuality} (gold), or {Object.bestQuality} (iridium).
+
+                Usage: player_add name "<item name>" [count] [quality]
+                - item name: the item name to search (use the 'list_items' command to see a list). This will add the item immediately if it's an exact match, else show a table of matching items.
+                - count (optional): how many of the item to give.
+                - quality (optional): one of {Object.lowQuality} (normal), {Object.medQuality} (silver), {Object.highQuality} (gold), or {Object.bestQuality} (iridium).
+
+                These examples both add the galaxy sword to your inventory:
+                  player_add weapon 4
+                  player_add name "Galaxy Sword"
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>
@@ -161,28 +182,5 @@ internal class AddCommand : ConsoleCommand
         );
         monitor.Log($"Multiple items have a name containing '{name}'. Do you mean one of these?\n\n{options}", LogLevel.Info);
         return null;
-    }
-
-    /// <summary>Get the command description.</summary>
-    private static string GetDescription()
-    {
-        return
-            $"""
-            Gives the player an item.
-
-            Usage: player_add <item id> [count] [quality]
-            - item id: the item ID (use the 'list_items' command to see a list).
-            - count (optional): how many of the item to give.
-            - quality (optional): one of {Object.lowQuality} (normal), {Object.medQuality} (silver), {Object.highQuality} (gold), or {Object.bestQuality} (iridium).
-
-            Usage: player_add name "<item name>" [count] [quality]
-            - item name: the item name to search (use the 'list_items' command to see a list). This will add the item immediately if it's an exact match, else show a table of matching items.
-            - count (optional): how many of the item to give.
-            - quality (optional): one of {Object.lowQuality} (normal), {Object.medQuality} (silver), {Object.highQuality} (gold), or {Object.bestQuality} (iridium).
-
-            These examples both add the galaxy sword to your inventory:
-              player_add weapon 4
-              player_add name "Galaxy Sword"
-            """;
     }
 }

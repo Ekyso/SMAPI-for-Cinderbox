@@ -13,7 +13,17 @@ internal class SetMoneyCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public SetMoneyCommand()
-        : base("player_setmoney", "Sets the player's money.\n\nUsage: player_setmoney <value>\n- value: an integer amount.") { }
+        : base(
+            name: "player_setmoney",
+            description:
+                """
+                Sets the player's money.
+
+                Usage: player_setmoney <value>
+                - value: an integer amount.
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>

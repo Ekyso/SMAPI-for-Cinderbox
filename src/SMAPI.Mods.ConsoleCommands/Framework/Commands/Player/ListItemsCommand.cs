@@ -21,7 +21,17 @@ internal class ListItemsCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public ListItemsCommand()
-        : base("list_items", "Lists and searches items in the game data.\n\nUsage: list_items [search]\n- search (optional): an arbitrary search string to filter by.") { }
+        : base(
+            name: "list_items",
+            description:
+                """
+                Lists and searches items in the game data.
+
+                Usage: list_items [search]
+                - search (optional): an arbitrary search string to filter by.
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>

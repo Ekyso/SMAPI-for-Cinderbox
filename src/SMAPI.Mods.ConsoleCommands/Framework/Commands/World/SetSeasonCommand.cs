@@ -21,7 +21,17 @@ internal class SetSeasonCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public SetSeasonCommand()
-        : base("world_setseason", "Sets the season to the specified value.\n\nUsage: world_setseason <season>\n- season: the target season (one of 'spring', 'summer', 'fall', 'winter').") { }
+        : base(
+            name: "world_setseason",
+            description:
+                """
+                Sets the season to the specified value.
+
+                Usage: world_setseason <season>
+                - season: the target season (one of 'spring', 'summer', 'fall', 'winter').
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>

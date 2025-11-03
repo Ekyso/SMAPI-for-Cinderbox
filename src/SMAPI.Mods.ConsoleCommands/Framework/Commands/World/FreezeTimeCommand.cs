@@ -21,7 +21,18 @@ internal class FreezeTimeCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public FreezeTimeCommand()
-        : base("world_freezetime", "Freezes or resumes time.\n\nUsage: world_freezetime [value]\n- value: one of 0 (resume), 1 (freeze), or blank (toggle).", mayNeedUpdate: true) { }
+        : base(
+            name: "world_freezetime",
+            description:
+                """
+                Freezes or resumes time.
+
+                Usage: world_freezetime [value]
+                - value: one of 0 (resume), 1 (freeze), or blank (toggle).
+                """,
+            mayNeedUpdate: true
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>

@@ -13,7 +13,17 @@ internal class SetStaminaCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public SetStaminaCommand()
-        : base("player_setstamina", "Sets the player's stamina.\n\nUsage: player_setstamina [value]\n- value: an integer amount.") { }
+        : base(
+            name: "player_setstamina",
+            description:
+                """
+                Sets the player's stamina.
+
+                Usage: player_setstamina [value]
+                - value: an integer amount.
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>

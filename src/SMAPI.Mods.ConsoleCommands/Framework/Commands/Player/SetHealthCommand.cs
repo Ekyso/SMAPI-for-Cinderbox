@@ -13,7 +13,17 @@ internal class SetHealthCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public SetHealthCommand()
-        : base("player_sethealth", "Sets the player's health.\n\nUsage: player_sethealth [value]\n- value: an integer amount.") { }
+        : base(
+            name: "player_sethealth",
+            description:
+                """
+                Sets the player's health.
+
+                Usage: player_sethealth [value]
+                - value: an integer amount.
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>

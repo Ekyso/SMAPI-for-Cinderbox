@@ -14,7 +14,17 @@ internal class SetTimeCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public SetTimeCommand()
-        : base("world_settime", "Sets the time to the specified value.\n\nUsage: world_settime <value>\n- value: the target time in military time (like 0600 for 6am and 1800 for 6pm).") { }
+        : base(
+            name: "world_settime",
+            description:
+                """
+                Sets the time to the specified value.
+
+                Usage: world_settime <value>
+                - value: the target time in military time (like 0600 for 6am and 1800 for 6pm).
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>

@@ -12,7 +12,18 @@ internal class SetNameCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public SetNameCommand()
-        : base("player_setname", "Sets the player's name.\n\nUsage: player_setname <target> <name>\n- target: what to rename (one of 'player' or 'farm').\n- name: the new name to set.") { }
+        : base(
+            name: "player_setname",
+            description:
+                """
+                Sets the player's name.
+
+                Usage: player_setname <target> <name>
+                - target: what to rename (one of 'player' or 'farm').
+                - name: the new name to set.
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>

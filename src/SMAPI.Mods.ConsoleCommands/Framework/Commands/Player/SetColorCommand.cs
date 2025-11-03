@@ -13,7 +13,18 @@ internal class SetColorCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public SetColorCommand()
-        : base("player_changecolor", "Sets the color of a player feature.\n\nUsage: player_changecolor <target> <color>\n- target: what to change (one of 'hair', 'eyes', or 'pants').\n- color: a color value in RGB format, like (255,255,255).") { }
+        : base(
+            name: "player_changecolor",
+            description:
+                """
+                Sets the color of a player feature.
+
+                Usage: player_changecolor <target> <color>
+                - target: what to change (one of 'hair', 'eyes', or 'pants').
+                - color: a color value in RGB format, like (255,255,255).
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>
