@@ -5,6 +5,9 @@
 * For players:
   * Fixed `player_add` and `list_items` console commands not including some newer juice items.
 
+* For mod authors:
+  * Map tilesheet paths can now start with `../` to reference an asset under the `Content` folder that's not in `Content/Maps`.
+
 * For the web UI:
   * Improved Content Patcher [JSON schemas](technical/web.md#using-a-schema-file-directly):
     * Updated for Content Patcher 2.8.0.
