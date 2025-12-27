@@ -148,54 +148,51 @@ internal class CoreAssetPropagator
     {
         bool changed = false;
 
-        // get asset names to replace
-        // We propagate non-textures by comparing base asset names, to update any localized version like
-        // `asset.fr-FR` too. We need to check every content manager for in-place texture edits though, so we
-        // should avoid iterating their assets if possible. So here we just check for the current localized name
-        // and base name, which should cover normal cases.
-        IAssetName[] assetNames = assetName.LocaleCode != null
-            ? [assetName, assetName.GetBaseAssetName()]
-            : [assetName];
-
-        // update textures in-place
+        // update textures in-place (0 = localized asset name, 1 = base asset name)
+        for (int i = 0; i < 2; i++)
         {
-            // get new textures to copy
-            Lazy<Texture2D>[] newTextures = new Lazy<Texture2D>[assetNames.Length];
-            newTextures[0] = new Lazy<Texture2D>(() => this.DisposableContentManager.LoadLocalized<Texture2D>(assetName, language, useCache: false));
-            if (assetNames.Length > 1)
-                newTextures[1] = new Lazy<Texture2D>(() => this.DisposableContentManager.LoadLocalized<Texture2D>(assetNames[1], language, useCache: false));
+            bool forLocalizedAsset = i == 0;
+
+            // if the asset name is non-localized, only propagate it once
+            if (forLocalizedAsset && assetName.LocaleCode is null)
+                continue;
+
+            // get asset name to replace
+            // We propagate non-textures by comparing base asset names, to update any localized version like
+            // `asset.fr-FR` too. We need to check every content manager for in-place texture edits though, so we
+            // should avoid iterating their assets if possible. So here we just check for the current localized name
+            // and base name, which should cover normal cases.
+            IAssetName name = forLocalizedAsset
+                ? assetName
+                : assetName.GetBaseAssetName();
+
+            // get new texture to copy
+            Lazy<Texture2D?> newTexture = new(() =>
+            {
+                if (this.DisposableContentManager.DoesAssetExist<Texture2D>(name))
+                    return this.DisposableContentManager.LoadLocalized<Texture2D>(name, language, useCache: false);
+
+                this.Monitor.Log($"Skipped reload for '{name.Name}' because the underlying asset no longer exists.", LogLevel.Warn);
+                return null;
+            });
 
             // apply to content managers
             foreach (IContentManager contentManager in contentManagers)
             {
-                for (int i = 0; i < assetNames.Length; i++)
+                if (contentManager.IsLoaded(name))
                 {
-                    IAssetName name = assetNames[i];
+                    if (newTexture.Value is null)
+                        break;
 
-                    if (contentManager.IsLoaded(name))
-                    {
-                        if (this.DisposableContentManager.DoesAssetExist<Texture2D>(name))
-                        {
-                            changed = true;
-
-                            Texture2D texture = contentManager.LoadLocalized<Texture2D>(name, language, useCache: true);
-                            texture.CopyFromTexture(newTextures[i].Value);
-                        }
-                        else
-                        {
-                            this.Monitor.Log($"Skipped reload for '{name.Name}' because the underlying asset no longer exists.", LogLevel.Warn);
-                            break;
-                        }
-                    }
+                    Texture2D texture = contentManager.LoadLocalized<Texture2D>(name, language, useCache: true);
+                    texture.CopyFromTexture(newTexture.Value);
+                    changed = true;
                 }
             }
 
-            // drop temporary textures
-            foreach (Lazy<Texture2D> newTexture in newTextures)
-            {
-                if (newTexture.IsValueCreated)
-                    newTexture.Value.Dispose();
-            }
+            // drop temporary texture
+            if (newTexture.IsValueCreated)
+                newTexture.Value?.Dispose();
         }
 
         // update game state if needed
