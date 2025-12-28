@@ -205,21 +205,21 @@ internal class AssetDataForImage : AssetData<Texture2D>, IAssetDataForImage
 
             for (int i = startIndex; i <= endIndex; i++)
             {
-                int targetIndex = i - sourceOffset;
-
+                // get source pixel
                 Color above = sourceData[i];
-                Color below = mergedData[targetIndex];
-
-                // shortcut transparency
                 if (above.A < AssetDataForImage.MinOpacity)
                     continue;
 
+                // get target pixel
+                int targetIndex = i - sourceOffset;
+                Color below = mergedData[targetIndex];
+
+                // apply
                 if (patchMode == PatchMode.Overlay)
                 {
+                    // merge pixels
                     if (below.A < AssetDataForImage.MinOpacity || above.A == byte.MaxValue)
                         mergedData[targetIndex] = above;
-
-                    // merge pixels
                     else
                     {
                         // This performs a conventional alpha blend for the pixels, which are already
@@ -236,22 +236,20 @@ internal class AssetDataForImage : AssetData<Texture2D>, IAssetDataForImage
                 }
                 else
                 {
-                    // compute new alpha by subtracting mask alpha
-                    int newAlphaInt = below.A - above.A;
-
-                    // fully masked out
-                    if (newAlphaInt <= 0)
-                        mergedData[targetIndex] = new Color((byte)0, (byte)0, (byte)0, (byte)0);
-
+                    // subtract mask alpha
+                    int newAlpha = below.A - above.A;
+                    if (newAlpha <= 0)
+                        mergedData[targetIndex] = Color.Transparent;
                     else
                     {
-                        // This blends the pixels by removing the alpha defined in the mask.
-                        float scale = (float)newAlphaInt / below.A;
+                        // Since the pixels are already premultiplied by the pipeline based on the
+                        // alpha, rescale the RGB channels too to match the new alpha.
+                        float scale = (float)newAlpha / below.A;
                         mergedData[targetIndex] = new Color(
                             r: (int)Math.Clamp(Math.Round(below.R * scale), 0, 255),
                             g: (int)Math.Clamp(Math.Round(below.G * scale), 0, 255),
                             b: (int)Math.Clamp(Math.Round(below.B * scale), 0, 255),
-                            alpha: newAlphaInt
+                            alpha: newAlpha
                         );
                     }
                 }

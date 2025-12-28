@@ -9,6 +9,7 @@ public enum PatchMode
     /// <summary>Draw the new content over the original content, so the original content shows through any transparent or semi-transparent pixels.</summary>
     Overlay,
 
-    /// <summary>Masks the original content so that the alpha value of every pixel in the new content gets subtracted from the corresponding pixel in the original content.</summary>
+    /// <summary>Apply the new content over the original content as a transparency mask.</summary>
+    /// <remarks>This subtracts the alpha value of each pixel in the new content from the corresponding pixel in the original content. Colors in the new content are ignored. For example, a fully opaque pixel in the new content will result in a fully transparent pixel in the final image.</remarks>
     Mask
 }
