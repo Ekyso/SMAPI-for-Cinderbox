@@ -6,7 +6,11 @@
   * Fixed `player_add` and `list_items` console commands not including some newer juice items.
 
 * For mod authors:
-  * Map tilesheet paths can now start with `../` to reference an asset under the `Content` folder that's not in `Content/Maps`.
+  * Added [input API to send button presses to the game](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Input#Send_input) (thanks to martiandweller!).
+  * Added `PatchMode.Mask` option when editing textures, which lets you apply a transparency mask to the target texture (thanks to PinkSerenity!).
+  * Added support for map tilesheet paths starting with `../` to reference an asset under the `Content` folder that's not in `Content/Maps` (thanks to Spiderbuttons!).
+  * Improved performance when propagating localized assets in some cases (thanks to SinZ!).
+  * Fixed farmhouse map edits sometimes removing the spouse room (thanks to SinZ!).
 
 * For the web UI:
   * Improved mod compatibility list:
