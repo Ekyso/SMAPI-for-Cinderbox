@@ -74,52 +74,39 @@ internal class CoreAssetPropagator
     /// <param name="ignoreWorld">Whether the in-game world is fully unloaded (e.g. on the title screen), so there's no need to propagate changes into the world.</param>
     /// <param name="propagatedAssets">A lookup of asset names to whether they've been propagated.</param>
     /// <param name="changedWarpRoutes">Whether the NPC pathfinding warp route cache was reloaded.</param>
-    public void Propagate(IList<IContentManager> contentManagers, IDictionary<IAssetName, Type> assets, bool ignoreWorld, out IDictionary<IAssetName, bool> propagatedAssets, out bool changedWarpRoutes)
+    public void Propagate(IList<IContentManager> contentManagers, IDictionary<IAssetName, Type> assets, bool ignoreWorld, out Dictionary<IAssetName, bool> propagatedAssets, out bool changedWarpRoutes)
     {
-        // get base name lookup
-        propagatedAssets = assets
-            .Select(asset => asset.Key.GetBaseAssetName())
-            .Distinct()
-            .ToDictionary(name => name, _ => false);
+        propagatedAssets = new Dictionary<IAssetName, bool>(assets.Count);
 
-        // edit textures in-place
+        // propagate each asset
+        changedWarpRoutes = false;
         {
-            IAssetName[] textureAssets = assets
-                .Where(p => typeof(Texture2D).IsAssignableFrom(p.Value))
-                .Select(p => p.Key)
-                .ToArray();
+            Type imageType = typeof(Texture2D);
 
-            if (textureAssets.Any())
+            foreach ((IAssetName assetName, Type assetType) in assets)
             {
-                foreach (IAssetName assetName in textureAssets)
+                bool changed = false;
+
+                try
                 {
-                    bool changed = this.PropagateTexture(assetName, contentManagers, ignoreWorld);
-                    if (changed)
-                        propagatedAssets[assetName] = true;
+                    // image
+                    if (imageType.IsAssignableFrom(assetType))
+                        changed = this.PropagateTexture(assetName, contentManagers, ignoreWorld);
+
+                    // any other type
+                    else
+                    {
+                        changed = this.PropagateOther(assetName, assetType, ignoreWorld, out bool curChangedMapRoutes);
+                        changedWarpRoutes |= curChangedMapRoutes;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.Monitor.Log($"An error occurred while propagating changes to asset '{assetName.Name}'. Error details:\n{ex.GetLogSummary()}", LogLevel.Error);
                 }
 
-                foreach (IAssetName assetName in textureAssets)
-                    assets.Remove(assetName);
+                propagatedAssets[assetName] = changed;
             }
-        }
-
-        // reload other assets
-        changedWarpRoutes = false;
-        foreach (var entry in assets)
-        {
-            bool changed = false;
-            bool curChangedMapRoutes = false;
-            try
-            {
-                changed = this.PropagateOther(entry.Key, entry.Value, ignoreWorld, out curChangedMapRoutes);
-            }
-            catch (Exception ex)
-            {
-                this.Monitor.Log($"An error occurred while propagating asset changes. Error details:\n{ex.GetLogSummary()}", LogLevel.Error);
-            }
-
-            propagatedAssets[entry.Key] = changed;
-            changedWarpRoutes = changedWarpRoutes || curChangedMapRoutes;
         }
 
         // reload NPC pathfinding cache if any map routes changed
