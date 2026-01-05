@@ -63,6 +63,15 @@ internal static class LowLevelEnvironmentUtility
             case nameof(Platform.Mac):
                 name = $"macOS {name}";
                 break;
+
+            case nameof(Platform.Windows):
+                // version 10 + 11
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version is { Major: 10, Minor: 0 } version)
+                {
+                    int mainVersion = version.Build switch { < 22000 => 10, _ => 11 };
+                    name = $"Windows {mainVersion} ({name.Replace("Microsoft Windows NT ", "")})";
+                }
+                break;
         }
 
         return name;
