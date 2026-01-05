@@ -1,10 +1,8 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
 #if SMAPI_FOR_WINDOWS
-using System.Management;
 #endif
 using System.Runtime.InteropServices;
 using StardewModdingAPI.Toolkit.Utilities;
@@ -54,24 +52,8 @@ internal static class LowLevelEnvironmentUtility
     /// <param name="platform">The current platform.</param>
     public static string GetFriendlyPlatformName(string platform)
     {
-#if SMAPI_FOR_WINDOWS
-        try
-        {
-            string? result = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem")
-                .Get()
-                .Cast<ManagementObject>()
-                .Select(entry => entry.GetPropertyValue("Caption").ToString())
-                .FirstOrDefault();
-
-            return result ?? "Windows";
-        }
-        catch
-        {
-            // fallback to default behavior
-        }
-#endif
-
         string name = Environment.OSVersion.ToString();
+
         switch (platform)
         {
             case nameof(Platform.Android):
@@ -82,6 +64,7 @@ internal static class LowLevelEnvironmentUtility
                 name = $"macOS {name}";
                 break;
         }
+
         return name;
     }
 

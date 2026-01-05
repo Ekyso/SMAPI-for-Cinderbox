@@ -197,11 +197,6 @@ foreach ($folder in $folders) {
         cp "$installAssets/windows-exe-config.xml" "$bundlePath/StardewModdingAPI.exe.config"
     }
 
-    # copy .NET dependencies
-    if ($folder -eq "windows") {
-        cp "$smapiBin/System.Management.dll" "$bundlePath/smapi-internal"
-    }
-
     # copy bundled mods
     foreach ($modName in $bundleModNames) {
         $fromPath = "src/SMAPI.Mods.$modName/bin/$buildConfig/$runtime/publish"
