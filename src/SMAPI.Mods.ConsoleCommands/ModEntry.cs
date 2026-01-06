@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using StardewModdingAPI.Mods.ConsoleCommands.Framework.Commands;
+using StardewModdingAPI.Mods.ConsoleCommands.Framework.Commands.Other;
 
 namespace StardewModdingAPI.Mods.ConsoleCommands;
 
@@ -63,10 +64,15 @@ public class ModEntry : Mod
     /// <summary>Find all commands in the assembly.</summary>
     private IEnumerable<IConsoleCommand> ScanForCommands()
     {
-        return (
-            from type in this.GetType().Assembly.GetTypes()
-            where !type.IsAbstract && typeof(IConsoleCommand).IsAssignableFrom(type)
-            select (IConsoleCommand)Activator.CreateInstance(type)!
-        );
+        foreach (Type type in this.GetType().Assembly.GetTypes())
+        {
+            if (type.IsAbstract || !typeof(IConsoleCommand).IsAssignableFrom(type))
+                continue;
+
+            if (type == typeof(SetVerboseCommand))
+                yield return new SetVerboseCommand(this.Helper.ModRegistry);
+            else
+                yield return (IConsoleCommand)Activator.CreateInstance(type)!;
+        }
     }
 }

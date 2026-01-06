@@ -4,6 +4,7 @@
 ## Upcoming release
 * For players:
   * The SMAPI console/log now shows "Windows 10" or "Windows 11" in the log instead of its internal OS identifier.
+  * Added [`set_verbose` console command](https://stardewvalleywiki.com/Modding:Console_commands#set_verbose).
   * Fixed `player_add` and `list_items` console commands not including some newer juice items.
   * Fixed farmhouse map edits sometimes removing the spouse room (thanks to SinZ!).
   * Fixed installer error if Steam has an empty game path saved to the registry.
