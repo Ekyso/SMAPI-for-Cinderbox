@@ -1,6 +1,10 @@
 ← [README](README.md)
 
 # Release notes
+## Upcoming release
+* For the web UI:
+  * Updated [JSON schema](technical/web.md#using-a-schema-file-directly) for Content Patcher 2.9.0.
+
 ## 4.4.0
 Released 10 January 2026 for Stardew Valley 1.6.14 or later. See [release highlights](https://www.patreon.com/posts/147916705).
 
@@ -27,7 +31,7 @@ Released 10 January 2026 for Stardew Valley 1.6.14 or later. See [release highli
 * For the web UI:
   * Improved mod compatibility list:
     * Added support for mod links in warnings.
-  * Improved Content Patcher [JSON schemas](technical/web.md#using-a-schema-file-directly):
+  * Improved Content Patcher [JSON schema](technical/web.md#using-a-schema-file-directly):
     * Updated for Content Patcher 2.8.0.
     * Fixed schema requiring `AddNPCWarps` instead of `AddNpcWarps`.
     * Fixed validation error if a warp field contains tokens or consecutive spaces (thanks to irocendar!).
