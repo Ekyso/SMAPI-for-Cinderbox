@@ -1,18 +1,20 @@
 ← [README](README.md)
 
 # Release notes
-## Upcoming release
+## 4.4.0
+Released 10 January 2026 for Stardew Valley 1.6.14 or later. See [release highlights](https://www.patreon.com/posts/147916705).
+
 * For players:
-  * The SMAPI console/log now shows "Windows 10" or "Windows 11" in the log instead of its internal OS identifier.
   * Added [`set_verbose` console command](https://stardewvalleywiki.com/Modding:Console_commands#set_verbose).
+  * The SMAPI log now shows a friendly Windows name (like "Windows 11") instead of its internal identifier.
   * Fixed `player_add` and `list_items` console commands not including some newer juice items.
   * Fixed farmhouse map edits sometimes removing the spouse room (thanks to SinZ!).
   * Fixed installer error if Steam has an empty game path saved to the registry.
 
 * For mod authors:
   * Added [input API to send button presses to the game](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Input#Send_input) (thanks to martiandweller!).
-  * Added `PatchMode.Mask` option when editing textures, which lets you apply a transparency mask to the target texture (thanks to PinkSerenity!).
-  * Added support for map tilesheet paths starting with `../` to reference an asset under the `Content` folder that's not in `Content/Maps` (thanks to Spiderbuttons!).
+  * Added transparency masks via `PatchMode.Mask` when editing images (thanks to PinkSerenity!).
+  * Added support for map tilesheets referencing an asset outside `Content/Maps` using a relative `../` path (thanks to Spiderbuttons!).
   * Added asset propagation for spouse room map edits.
   * Improved performance when propagating localized assets in some cases (thanks to SinZ!).
   * Improved error-handling during asset propagation.
