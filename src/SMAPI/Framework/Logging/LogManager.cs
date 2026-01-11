@@ -58,7 +58,7 @@ internal class LogManager : IDisposable
         this.LogFile = new LogFileManager(logPath);
 
         // init monitor
-        this.GetMonitorImpl = (id, name) => new Monitor(name, this.LogFile, colorConfig, verboseLogging.Contains("*") || verboseLogging.Contains(id), getScreenIdForLog)
+        this.GetMonitorImpl = (id, name) => new Monitor(id, name, this.LogFile, colorConfig, verboseLogging.Contains("*") || verboseLogging.Contains(id), getScreenIdForLog)
         {
             WriteToConsole = writeToConsole,
             ShowTraceInConsole = isDeveloperMode,

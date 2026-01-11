@@ -1,6 +1,39 @@
 ← [README](README.md)
 
 # Release notes
+## 4.4.0
+Released 10 January 2026 for Stardew Valley 1.6.14 or later. See [release highlights](https://www.patreon.com/posts/147916705).
+
+* For players:
+  * Added [`set_verbose` console command](https://stardewvalleywiki.com/Modding:Console_commands#set_verbose).
+  * The SMAPI log now shows a friendly Windows name (like "Windows 11") instead of its internal identifier.
+  * Fixed `player_add` and `list_items` console commands not including some newer juice items.
+  * Fixed farmhouse map edits sometimes removing the spouse room (thanks to SinZ!).
+  * Fixed installer error if Steam has an empty game path saved to the registry.
+
+* For mod authors:
+  * Added [input API to send button presses to the game](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Input#Send_input) (thanks to martiandweller!).
+  * Added transparency masks via `PatchMode.Mask` when editing images (thanks to PinkSerenity!).
+  * Added support for map tilesheets referencing an asset outside `Content/Maps` using a relative `../` path (thanks to Spiderbuttons!).
+  * Added asset propagation for spouse room map edits.
+  * Improved performance when propagating localized assets in some cases (thanks to SinZ!).
+  * Improved error-handling during asset propagation.
+  * Updated dependencies, including...
+    * [Newtonsoft.Json](https://www.newtonsoft.com/json) 13.0.3 → 13.0.4 (see [changes](https://github.com/JamesNK/Newtonsoft.Json/releases/tag/13.0.4));
+    * [Pintail](https://github.com/Nanoray-pl/Pintail) 2.8.1 → 2.9.1 (see [changes](https://github.com/Nanoray-pl/Pintail/blob/master/docs/release-notes.md#291)).
+  * Fixed asset propagation for farmer sprites before a save is loaded.
+  * Removed `System.Management.dll`, which SMAPI no longer uses.
+
+* For the web UI:
+  * Improved mod compatibility list:
+    * Added support for mod links in warnings.
+  * Improved Content Patcher [JSON schemas](technical/web.md#using-a-schema-file-directly):
+    * Updated for Content Patcher 2.8.0.
+    * Fixed schema requiring `AddNPCWarps` instead of `AddNpcWarps`.
+    * Fixed validation error if a warp field contains tokens or consecutive spaces (thanks to irocendar!).
+    * Fixed validation error if a `Target` contains multiple targets (thanks to irocendar!).
+    * Fixed `FromFile` errors like "_matches a schema that is not allowed_" (thanks to irocendar!).
+
 ## 4.3.2
 Released 14 July 2025 for Stardew Valley 1.6.14 or later. See [4.3 release highlights](https://www.patreon.com/posts/133992196).
 

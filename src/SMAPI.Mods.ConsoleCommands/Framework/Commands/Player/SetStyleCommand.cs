@@ -12,7 +12,18 @@ internal class SetStyleCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public SetStyleCommand()
-        : base("player_changestyle", "Sets the style of a player feature.\n\nUsage: player_changestyle <target> <value>.\n- target: what to change (one of 'hair', 'shirt', 'skin', 'acc', 'shoe', 'swim', or 'gender').\n- value: the style ID.") { }
+        : base(
+            name: "player_changestyle",
+            description:
+                """
+                Sets the style of a player feature.
+
+                Usage: player_changestyle <target> <value>
+                - target: what to change (one of 'hair', 'shirt', 'skin', 'acc', 'shoe', 'swim', or 'gender').
+                - value: the style ID.
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>

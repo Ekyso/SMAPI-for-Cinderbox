@@ -15,7 +15,20 @@ internal class ApplySaveFixCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public ApplySaveFixCommand()
-        : base("apply_save_fix", "Apply one of the game's save migrations to the currently loaded save. WARNING: This may corrupt or make permanent changes to your save. DO NOT USE THIS unless you're absolutely sure.\n\nUsage: apply_save_fix list\nList all valid save IDs.\n\nUsage: apply_save_fix <fix ID>\nApply the named save fix.") { }
+        : base(
+            name: "apply_save_fix",
+            description:
+                """
+                Apply one of the game's save migrations to the currently loaded save. WARNING: This may corrupt or make permanent changes to your save. DO NOT USE THIS unless you're absolutely sure.
+
+                Usage: apply_save_fix list
+                List all valid save IDs.
+
+                Usage: apply_save_fix <fix ID>
+                Apply the named save fix.
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>

@@ -15,7 +15,6 @@
     <PackageReference Include="Markdig" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Pathoschild.Http.FluentClient" />
-    <PackageReference Include="System.Management" Condition="'$(OS)' == 'Windows_NT'" />
     <PackageReference Include="Microsoft.Win32.Registry" Condition="'$(OS)' == 'Windows_NT'" />
     <PackageReference Include="VdfConverter" Condition="'$(OS)' == 'Windows_NT'" Private="False" />
   </ItemGroup>

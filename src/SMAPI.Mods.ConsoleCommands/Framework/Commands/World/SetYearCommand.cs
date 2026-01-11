@@ -14,7 +14,17 @@ internal class SetYearCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public SetYearCommand()
-        : base("world_setyear", "Sets the year to the specified value.\n\nUsage: world_setyear <year>\n- year: the target year (a number starting from 1).") { }
+        : base(
+            name: "world_setyear",
+            description:
+                """
+                Sets the year to the specified value.
+
+                Usage: world_setyear <year>
+                - year: the target year (a number starting from 1).
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>

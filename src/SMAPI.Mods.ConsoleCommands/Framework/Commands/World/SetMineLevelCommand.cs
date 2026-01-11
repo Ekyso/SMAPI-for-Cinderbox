@@ -13,7 +13,17 @@ internal class SetMineLevelCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public SetMineLevelCommand()
-        : base("world_setminelevel", "Sets the mine level?\n\nUsage: world_setminelevel <value>\n- value: The target level (a number starting at 1).") { }
+        : base(
+            name: "world_setminelevel",
+            description:
+                """
+                Sets the mine level?
+
+                Usage: world_setminelevel <value>
+                - value: The target level (a number starting at 1).
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>

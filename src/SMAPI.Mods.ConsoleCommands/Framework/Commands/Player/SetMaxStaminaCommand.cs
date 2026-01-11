@@ -13,7 +13,17 @@ internal class SetMaxStaminaCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public SetMaxStaminaCommand()
-        : base("player_setmaxstamina", "Sets the player's max stamina.\n\nUsage: player_setmaxstamina [value]\n- value: an integer amount.") { }
+        : base(
+            name: "player_setmaxstamina",
+            description:
+                """
+                Sets the player's max stamina.
+
+                Usage: player_setmaxstamina [value]
+                - value: an integer amount.
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>

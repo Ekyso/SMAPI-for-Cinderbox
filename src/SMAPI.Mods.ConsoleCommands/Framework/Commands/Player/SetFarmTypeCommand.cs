@@ -19,7 +19,17 @@ internal class SetFarmTypeCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public SetFarmTypeCommand()
-        : base("set_farm_type", "Sets the current player's farm type.\n\nUsage: set_farm_type <farm type>\n- farm type: the farm type to set. Enter `set_farm_type list` for a list of available farm types.") { }
+        : base(
+            name: "set_farm_type",
+            description:
+                """
+                Sets the current player's farm type.
+
+                Usage: set_farm_type <farm type>
+                - farm type: the farm type to set. Enter `set_farm_type list` for a list of available farm types.
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>

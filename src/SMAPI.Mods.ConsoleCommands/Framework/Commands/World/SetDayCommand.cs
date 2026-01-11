@@ -14,7 +14,17 @@ internal class SetDayCommand : ConsoleCommand
     *********/
     /// <summary>Construct an instance.</summary>
     public SetDayCommand()
-        : base("world_setday", "Sets the day to the specified value.\n\nUsage: world_setday <value>.\n- value: the target day (a number from 1 to 28).") { }
+        : base(
+            name: "world_setday",
+            description:
+                """
+                Sets the day to the specified value.
+
+                Usage: world_setday <value>.
+                - value: the target day (a number from 1 to 28).
+                """
+        )
+    { }
 
     /// <summary>Handle the command.</summary>
     /// <param name="monitor">Writes messages to the console and log file.</param>

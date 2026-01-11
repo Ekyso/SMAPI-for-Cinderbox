@@ -45,7 +45,7 @@ public class RawModEntry
     public string? Source { get; set; }
 
     /// <summary>Custom text indicating compatibility issues with the mod (e.g. not compatible with Linux/Mac).</summary>
-    public string[]? Warnings { get; set; }
+    public string?[]? Warnings { get; set; }
 
     /// <summary>Special notes intended for developers who maintain unofficial updates or submit pull requests.</summary>
     public string? DeveloperNotes { get; set; }
@@ -64,6 +64,9 @@ public class RawModEntry
 
     /// <summary>The unofficial update which fixes compatibility with the latest Stardew Valley and SMAPI versions.</summary>
     public RawModUnofficialUpdate? UnofficialUpdate { get; set; }
+
+    /// <summary>If the compatibility status is <see cref="ModCompatibilityStatus.Abandoned"/>, the reason it was abandoned.</summary>
+    public string? AbandonedReason { get; set; }
 
     /****
     ** Content packs only
@@ -103,6 +106,14 @@ public class RawModEntry
         }
 
         return status;
+    }
+
+    /// <summary>Get the reason the mod was abandoned, if applicable.</summary>
+    public ModCompatibilityReasonAbandoned GetReasonAbandoned()
+    {
+        return Enum.TryParse(this.AbandonedReason, true, out ModCompatibilityReasonAbandoned reason)
+            ? reason
+            : ModCompatibilityReasonAbandoned.None;
     }
 
     /// <summary>Get the compatibility summary as shown on the compatibility list.</summary>
