@@ -6,6 +6,7 @@ on:
             - "[0-9]+.[0-9]+.[0-9]+" # stable version tag
         branches:
             - develop
+            - build-test
 
 jobs:
     build_and_release:
@@ -19,28 +20,6 @@ jobs:
                 uses: actions/checkout@v4
                 with:
                     fetch-depth: 0
-
-            -   name: Get trigger type # possible values: tag, dev-branch
-                id: trigger-type
-                shell: pwsh
-                run: |
-                    # If we ever decide to add manual workflow runs, this will need to be reworked.
-
-                    if ('${{github.ref_type}}' -eq 'tag') {
-                        Write-Host 'Building regular release.'
-                        'trigger_type=tag' | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-                    }
-                    elseif ('${{github.ref_name}}' -eq 'develop') {
-                        Write-Host 'Building in-development release.'
-                        'trigger_type=dev-branch' | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-                    }
-                    else {
-                        Write-Error 'Ran into an unexpected trigger type. Aborting.'
-                        Write-Host 'Debug info:'
-                        Write-Host 'ref_type: ${{github.ref_type}}'
-                        Write-Host 'ref_name: ${{github.ref_name}}'
-                        exit 1
-                    }
 
             -   name: Get SMAPI assembly version
                 id: smapi-version
@@ -72,7 +51,7 @@ jobs:
                     Write-Host "Version: $major.$minor.$patch"
 
             -   name: Verify SMAPI assembly version matches tag
-                if: steps.trigger-type.outputs.trigger_type == 'tag'
+                if: github.ref_type == 'tag'
                 shell: pwsh
                 run: |
                     if ($env:VERSION -ne '${{github.ref_name}}') {
@@ -84,7 +63,7 @@ jobs:
                     }
 
             -   name: Update SMAPI assembly version
-                if: steps.trigger-type.outputs.trigger_type == 'dev-branch'
+                if: github.ref_type != 'tag'
                 shell: pwsh
                 run: |
                     $updatedPatch = [int]${{steps.smapi-version.outputs.smapi_patch}} + 1
@@ -129,7 +108,7 @@ jobs:
 
             -   name: Create GitHub release
                 uses: ncipollo/release-action@v1
-                if: steps.trigger-type.outputs.trigger_type == 'tag'
+                if: github.ref_type == 'tag'
                 with:
                     artifacts: 'bin/SMAPI-${{env.VERSION}}*.zip'
                     token: '${{secrets.GITHUB_TOKEN}}'
