@@ -2,8 +2,18 @@
 
 # Release notes
 ## Upcoming release
-* For the web UI:
-  * Updated [JSON schema](technical/web.md#using-a-schema-file-directly) for Content Patcher 2.9.0.
+**SMAPI release builds are automated on GitHub** (thanks to DecidedlyHuman!).
+
+The main benefits include...
+- Significantly improved security:
+  - This eliminates the risk of hidden malware infecting SMAPI releases.
+  - When downloading a release, you can compare the download's file hash against the GitHub build to
+    guarantee that (a) it was compiled from the code on GitHub and (b) it has not been tampered with.
+- You can now download a preview of the next SMAPI release at any time, since every commit produces an alpha build.
+
+This is also a big step towards future improvements, like...
+- signing builds to reduce antivirus alerts on Windows and macOS;
+- and automating mod builds too.
 
 ## 4.4.0
 Released 10 January 2026 for Stardew Valley 1.6.14 or later. See [release highlights](https://www.patreon.com/posts/147916705).
@@ -32,7 +42,7 @@ Released 10 January 2026 for Stardew Valley 1.6.14 or later. See [release highli
   * Improved mod compatibility list:
     * Added support for mod links in warnings.
   * Improved Content Patcher [JSON schema](technical/web.md#using-a-schema-file-directly):
-    * Updated for Content Patcher 2.8.0.
+    * Updated for Content Patcher 2.8.0 and 2.9.0.
     * Fixed schema requiring `AddNPCWarps` instead of `AddNpcWarps`.
     * Fixed validation error if a warp field contains tokens or consecutive spaces (thanks to irocendar!).
     * Fixed validation error if a `Target` contains multiple targets (thanks to irocendar!).
