@@ -9,6 +9,7 @@
   <Folder Name="/.root/.github/">
     <File Path="../.github/CONTRIBUTING.md" />
     <File Path="../.github/SUPPORT.md" />
+    <File Path="../.github/workflows/build-smapi.yml" />
   </Folder>
   <Folder Name="/.root/.github/ISSUE_TEMPLATE/">
     <File Path="../.github/ISSUE_TEMPLATE/config.yml" />

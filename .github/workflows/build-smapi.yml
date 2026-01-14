@@ -13,83 +13,91 @@ jobs:
         permissions:
             contents: write # For creating releases.
             id-token: write # For creating attestations.
-            attestations: write 
+            attestations: write
         steps:
             -   name: Checkout code
                 uses: actions/checkout@v4
                 with:
                     fetch-depth: 0
 
-            -   name: Get trigger type. 
+            -   name: Get trigger type.
                 id: trigger-type # Possible values: tag, dev-branch.
+                shell: pwsh
                 run: |
                     # If we ever decide to add manual workflow runs, this will need to be reworked.
 
-                    if [[ "${{ github.ref_type }}" == "tag" ]]; then
-                        echo "Building regular release."
-                        echo "trigger_type=tag" >> $GITHUB_OUTPUT
-                    elif [[ "${{ github.ref_name }}" == "develop" ]]; then
-                        echo "Building in-development release."
-                        echo "trigger_type=dev-branch" >> $GITHUB_OUTPUT
-                    else                        
-                        echo "Ran into an unexpected trigger type. Aborting."
-                        echo "Debug info:"
-                        echo "ref_type: ${{ github.ref_type }}"
-                        echo "ref_name: ${{ github.ref_name }}"
-
+                    if ('${{github.ref_type}}' -eq 'tag') {
+                        Write-Host 'Building regular release.'
+                        'trigger_type=tag' | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+                    }
+                    elseif ('${{github.ref_name}}' -eq 'develop') {
+                        Write-Host 'Building in-development release.'
+                        'trigger_type=dev-branch' | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+                    }
+                    else {
+                        Write-Error 'Ran into an unexpected trigger type. Aborting.'
+                        Write-Host 'Debug info:'
+                        Write-Host 'ref_type: ${{github.ref_type}}'
+                        Write-Host 'ref_name: ${{github.ref_name}}'
                         exit 1
-                    fi
+                    }
 
             -   name: Extract current SMAPI version.
                 id: smapi-version
+                shell: pwsh
                 run: |
-                    version=$(pwsh -Command "([xml](Get-Content build/common.targets)).Project.PropertyGroup.Version")
-                    pattern="^([0-9]+)\.([0-9]+)\.([0-9]+)$"
+                    [xml]$xml = Get-Content build/common.targets
+                    [string]$version = $xml.Project.PropertyGroup.Version
+                    $version = $version.Trim()
 
-                    if [[ "$version" =~ $pattern ]]; then
-                        MAJOR="${BASH_REMATCH[1]}"
-                        MINOR="${BASH_REMATCH[2]}"
-                        PATCH="${BASH_REMATCH[3]}"
-                    else
-                        echo "Input semver did not match the strict x.y.z format. Aborting."
-                        echo "Debug info:"
-                        echo "Extracted version: $version"
-
+                    $pattern = '^(\d+)\.(\d+)\.(\d+)$'
+                    if ($version -match $pattern) {
+                        $major = $Matches[1]
+                        $minor = $Matches[2]
+                        $patch = $Matches[3]
+                    }
+                    else {
+                        Write-Error 'Input semver did not match the strict x.y.z format. Aborting.'
+                        Write-Host 'Debug info:'
+                        Write-Host "Extracted version: $version"
                         exit 1
-                    fi
+                    }
 
-                    echo "smapi_version=$version" >> $GITHUB_OUTPUT
-                    echo "smapi_major=$MAJOR" >> $GITHUB_OUTPUT
-                    echo "smapi_minor=$MINOR" >> $GITHUB_OUTPUT
-                    echo "smapi_patch=$PATCH" >> $GITHUB_OUTPUT
-                    echo "VERSION=$MAJOR.$MINOR.$PATCH" >> $GITHUB_ENV
-                    echo "Version: $MAJOR.$MINOR.$PATCH"
+                    "smapi_version=$version" | Out-File $env:GITHUB_OUTPUT -Append
+                    "smapi_major=$major"     | Out-File $env:GITHUB_OUTPUT -Append
+                    "smapi_minor=$minor"     | Out-File $env:GITHUB_OUTPUT -Append
+                    "smapi_patch=$patch"     | Out-File $env:GITHUB_OUTPUT -Append
+                    "VERSION=$major.$minor.$patch" | Out-File $env:GITHUB_ENV -Append
+
+                    Write-Host "Version: $major.$minor.$patch"
 
             -   name: Verify SMAPI version matches tag.
                 if: steps.trigger-type.outputs.trigger_type == 'tag'
+                shell: pwsh
                 run: |
-                    if [[ "$VERSION" != "${{ github.ref_name }}" ]]; then
-                        echo "The pushed tag doesn't match the version we have in build/common.targets. Aborting."
-                        echo "Debug info: "
-                        echo "Tag: ${{ github.ref_name }}"
-                        echo "In common.targets: $VERSION"
-
+                    if ($env:VERSION -ne '${{github.ref_name}}') {
+                        Write-Error 'The pushed tag doesn't match the version we have in build/common.targets. Aborting.'
+                        Write-Host 'Debug info:'
+                        Write-Host 'Tag: ${{github.ref_name}}'
+                        Write-Host "In common.targets: $env:VERSION"
                         exit 1
-                    fi
+                    }
 
             -   name: Update SMAPI's current version for dev builds.
-                id: version-parsing 
+                id: version-parsing
                 if: steps.trigger-type.outputs.trigger_type == 'dev-branch'
+                shell: pwsh
                 run: |
-                    updated_patch=$((${{steps.smapi-version.outputs.smapi_patch}} + 1))
-                    date=$(date +"%Y%m%d")
-                    updated_version=${{steps.smapi-version.outputs.smapi_major}}.${{steps.smapi-version.outputs.smapi_minor}}.$updated_patch-alpha.$date
-                    echo "VERSION=$updated_version" >> $GITHUB_ENV
+                    $updatedPatch = [int]${{steps.smapi-version.outputs.smapi_patch}} + 1
+                    $date = Get-Date -Format 'yyyyMMdd'
+                    $updatedVersion = "${{steps.smapi-version.outputs.smapi_major}}.${{steps.smapi-version.outputs.smapi_minor}}.$updatedPatch-alpha.$date"
 
-                    echo "This is a dev version. Building as version: $updated_version"
+                    "VERSION=$updatedVersion" | Out-File $env:GITHUB_ENV -Append
 
-                    build/unix/set-smapi-version.sh "$updated_version"
-                    echo "Version updated using build/unix/set-smapi-version.sh."
+                    Write-Host "This is a dev version. Building as version: $updatedVersion"
+
+                    bash build/unix/set-smapi-version.sh "$updatedVersion"
+                    Write-Host 'Version updated using build/unix/set-smapi-version.sh.'
 
             -   name: Checkout reference assemblies
                 uses: actions/checkout@v4
@@ -103,37 +111,38 @@ jobs:
                     ln -s "$(pwd)/stardew-reference-assemblies" "$HOME/StardewValley"
 
             -   name: Build SMAPI.
+                shell: pwsh
                 run: |
-                    echo "Building SMAPI $VERSION."
-                    build/unix/prepare-install-package.sh "$VERSION"
+                    Write-Host "Building SMAPI $env:VERSION."
+                    bash build/unix/prepare-install-package.sh "$env:VERSION"
 
             -   name: Rename build zips.
                 run: |
-                    mv "bin/SMAPI ${{ env.VERSION }} installer.zip" "bin/SMAPI-${{ env.VERSION }}-installer.zip"
-                    mv "bin/SMAPI ${{ env.VERSION }} installer for developers.zip" "bin/SMAPI-${{ env.VERSION }}-installer-for-developers.zip"
+                    mv "bin/SMAPI ${{env.VERSION}} installer.zip" "bin/SMAPI-${{env.VERSION}}-installer.zip"
+                    mv "bin/SMAPI ${{env.VERSION}} installer for developers.zip" "bin/SMAPI-${{env.VERSION}}-installer-for-developers.zip"
 
             -   name: Upload regular installer.
                 uses: actions/upload-artifact@v4
                 with:
-                    name: 'SMAPI ${{ env.VERSION }} installer'
-                    path: 'bin/SMAPI-${{ env.VERSION }}-installer.zip'
+                    name: 'SMAPI ${{env.VERSION}} installer'
+                    path: 'bin/SMAPI-${{env.VERSION}}-installer.zip'
                     if-no-files-found: 'error'
 
             -   name: Upload installer for developers.
                 uses: actions/upload-artifact@v4
                 with:
-                    name: "SMAPI ${{ env.VERSION }} installer for developers"
-                    path: "bin/SMAPI-${{ env.VERSION }}-installer-for-developers.zip"
+                    name: 'SMAPI ${{env.VERSION}} installer for developers'
+                    path: 'bin/SMAPI-${{env.VERSION}}-installer-for-developers.zip'
                     if-no-files-found: 'error'
 
             -   name: Create release and upload artifact
                 uses: ncipollo/release-action@v1
                 if: steps.trigger-type.outputs.trigger_type == 'tag'
                 with:
-                    artifacts: "bin/SMAPI-${{ env.VERSION }}*.zip"
-                    token: ${{ secrets.GITHUB_TOKEN }}
-                    tag: ${{ github.ref_name }}
-                    name: "${{ env.VERSION }}"
+                    artifacts: 'bin/SMAPI-${{env.VERSION}}*.zip'
+                    token: '${{secrets.GITHUB_TOKEN}}'
+                    tag: '${{github.ref_name}}'
+                    name: "${{env.VERSION}}"
                     body: |
                         Draft.
                     draft: true
@@ -143,5 +152,5 @@ jobs:
                 id: attestation-step
                 with:
                     subject-path: |
-                        bin/SMAPI-${{ env.VERSION }}-installer.zip
-                        bin/SMAPI-${{ env.VERSION }}-installer-for-developers.zip
+                        bin/SMAPI-${{env.VERSION}}-installer.zip
+                        bin/SMAPI-${{env.VERSION}}-installer-for-developers.zip
