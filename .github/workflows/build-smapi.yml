@@ -88,8 +88,8 @@ jobs:
                 shell: pwsh
                 run: |
                     $updatedPatch = [int]${{steps.smapi-version.outputs.smapi_patch}} + 1
-                    $date = Get-Date -Format 'yyyyMMdd'
-                    $updatedVersion = "${{steps.smapi-version.outputs.smapi_major}}.${{steps.smapi-version.outputs.smapi_minor}}.$updatedPatch-alpha.$date"
+                    $timestamp = Get-Date -Format 'yyyyMMdd-HHmm'
+                    $updatedVersion = "${{steps.smapi-version.outputs.smapi_major}}.${{steps.smapi-version.outputs.smapi_minor}}.$updatedPatch-alpha.$timestamp"
 
                     "VERSION=$updatedVersion" | Out-File $env:GITHUB_ENV -Append
 
