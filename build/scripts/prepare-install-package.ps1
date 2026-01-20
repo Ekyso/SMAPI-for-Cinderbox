@@ -1,3 +1,5 @@
+#!/usr/bin/env pwsh
+
 #
 #
 # Note: On Windows, this script *does not* set Linux permissions. The final changes are handled by the

@@ -1,3 +1,5 @@
+#!/usr/bin/env pwsh
+
 . "$PSScriptRoot\lib\in-place-regex.ps1"
 
 # get version number
