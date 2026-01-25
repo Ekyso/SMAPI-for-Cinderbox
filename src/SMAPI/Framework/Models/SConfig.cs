@@ -124,6 +124,7 @@ internal class SConfig
     /// <param name="useBetaChannel"><inheritdoc cref="UseBetaChannel" path="/summary" /></param>
     /// <param name="gitHubProjectName"><inheritdoc cref="GitHubProjectName" path="/summary" /></param>
     /// <param name="webApiBaseUrl"><inheritdoc cref="WebApiBaseUrl" path="/summary" /></param>
+    /// <param name="blacklistUrl"><inheritdoc cref="BlacklistUrl" path="/summary" /></param>
     /// <param name="verboseLogging"><inheritdoc cref="VerboseLogging" path="/summary" /></param>
     /// <param name="rewriteMods"><inheritdoc cref="RewriteMods" path="/summary" /></param>
     /// <param name="fixHarmony"><inheritdoc cref="FixHarmony" path="/summary" /></param>
@@ -135,7 +136,29 @@ internal class SConfig
     /// <param name="suppressUpdateChecks"><inheritdoc cref="SuppressUpdateChecks" path="/summary" /></param>
     /// <param name="modsToLoadEarly"><inheritdoc cref="ModsToLoadEarly" path="/summary" /></param>
     /// <param name="modsToLoadLate"><inheritdoc cref="ModsToLoadLate" path="/summary" /></param>
-    public SConfig(bool developerMode, bool? checkForUpdates, bool? checkForBlacklistUpdates, bool? checkContentIntegrity, bool? listenForConsoleInput, bool? paranoidWarnings, bool? useBetaChannel, string gitHubProjectName, string webApiBaseUrl, string[]? verboseLogging, bool? rewriteMods, bool? fixHarmony, bool? useCaseInsensitivePaths, bool? logNetworkTraffic, bool? logTechnicalDetailsForBrokenMods, ColorSchemeConfig consoleColors, bool? suppressHarmonyDebugMode, string[]? suppressUpdateChecks, string[]? modsToLoadEarly, string[]? modsToLoadLate)
+    public SConfig(
+        bool developerMode,
+        bool? checkForUpdates,
+        bool? checkForBlacklistUpdates,
+        bool? checkContentIntegrity,
+        bool? listenForConsoleInput,
+        bool? paranoidWarnings,
+        bool? useBetaChannel,
+        string gitHubProjectName,
+        string webApiBaseUrl,
+        string blacklistUrl,
+        string[]? verboseLogging,
+        bool? rewriteMods,
+        bool? fixHarmony,
+        bool? useCaseInsensitivePaths,
+        bool? logNetworkTraffic,
+        bool? logTechnicalDetailsForBrokenMods,
+        ColorSchemeConfig consoleColors,
+        bool? suppressHarmonyDebugMode,
+        string[]? suppressUpdateChecks,
+        string[]? modsToLoadEarly,
+        string[]? modsToLoadLate
+    )
     {
         this.DeveloperMode = developerMode;
         this.CheckForUpdates = checkForUpdates ?? (bool)SConfig.DefaultValues[nameof(this.CheckForUpdates)];
@@ -146,6 +169,7 @@ internal class SConfig
         this.UseBetaChannel = useBetaChannel ?? (bool)SConfig.DefaultValues[nameof(this.UseBetaChannel)];
         this.GitHubProjectName = gitHubProjectName;
         this.WebApiBaseUrl = webApiBaseUrl;
+        this.BlacklistUrl = blacklistUrl;
         this.VerboseLogging = new HashSet<string>(verboseLogging ?? [], StringComparer.OrdinalIgnoreCase);
         this.RewriteMods = rewriteMods ?? (bool)SConfig.DefaultValues[nameof(this.RewriteMods)];
         this.FixHarmony = fixHarmony ?? (bool)SConfig.DefaultValues[nameof(this.FixHarmony)];
