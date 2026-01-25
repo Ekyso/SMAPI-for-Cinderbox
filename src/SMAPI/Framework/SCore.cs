@@ -206,7 +206,7 @@ internal class SCore : IDisposable
         }
 
         // init basics
-        this.LogManager = new LogManager(logPath: logPath, colorConfig: this.Settings.ConsoleColors, writeToConsole: writeToConsole, verboseLogging: this.Settings.VerboseLogging, isDeveloperMode: this.Settings.DeveloperMode, getScreenIdForLog: this.GetScreenIdForLog);
+        this.LogManager = new LogManager(logPath: logPath, colorSchemeId: this.Settings.ConsoleColorScheme, colorConfig: this.Settings.ConsoleColorSchemes, writeToConsole: writeToConsole, verboseLogging: this.Settings.VerboseLogging, isDeveloperMode: this.Settings.DeveloperMode, getScreenIdForLog: this.GetScreenIdForLog);
         this.CommandManager = new CommandManager(this.Monitor);
         this.EventManager = new EventManager(this.ModRegistry);
         SCore.DeprecationManager = new DeprecationManager(this.Monitor, this.ModRegistry);

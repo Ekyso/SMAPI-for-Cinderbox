@@ -73,10 +73,11 @@ internal class Monitor : IMonitor
     /// <param name="modId">The mod ID, if applicable.</param>
     /// <param name="source">The name of the module which logs messages using this instance.</param>
     /// <param name="logFile">The log file to which to write messages.</param>
+    /// <param name="colorSchemeId">The color scheme ID in <paramref name="colorConfig"/> to use, or <see cref="MonitorColorScheme.AutoDetect"/> to select one automatically.</param>
     /// <param name="colorConfig">The colors to use for text written to the SMAPI console.</param>
     /// <param name="isVerbose">Whether verbose logging is enabled. This enables more detailed diagnostic messages than are normally needed.</param>
     /// <param name="getScreenIdForLog">Get the screen ID that should be logged to distinguish between players in split-screen mode, if any.</param>
-    public Monitor(string modId, string source, LogFileManager logFile, ColorSchemeConfig colorConfig, bool isVerbose, Func<int?> getScreenIdForLog)
+    public Monitor(string modId, string source, LogFileManager logFile, MonitorColorScheme colorSchemeId, Dictionary<MonitorColorScheme, Dictionary<ConsoleLogLevel, ConsoleColor>> colorConfig, bool isVerbose, Func<int?> getScreenIdForLog)
     {
         // validate
         if (string.IsNullOrWhiteSpace(source))
@@ -86,7 +87,7 @@ internal class Monitor : IMonitor
         this.ModId = modId;
         this.Source = source;
         this.LogFile = logFile ?? throw new ArgumentNullException(nameof(logFile), "The log file manager cannot be null.");
-        this.ConsoleWriter = new ColorfulConsoleWriter(Constants.Platform, colorConfig);
+        this.ConsoleWriter = new ColorfulConsoleWriter(Constants.Platform, colorSchemeId, colorConfig);
         this.IsVerbose = isVerbose;
         this.GetScreenIdForLog = getScreenIdForLog;
     }

@@ -95,8 +95,11 @@ internal class SConfig
     /// <summary>Whether to include more technical details about broken mods in the TRACE logs. This is mainly useful for creating compatibility rewriters.</summary>
     public bool LogTechnicalDetailsForBrokenMods { get; set; }
 
+    /// <summary>The color scheme ID in <see cref="ConsoleColorSchemes"/> to use, or <see cref="MonitorColorScheme.AutoDetect"/> to select one automatically.</summary>
+    public MonitorColorScheme ConsoleColorScheme { get; set; }
+
     /// <summary>The colors to use for text written to the SMAPI console.</summary>
-    public ColorSchemeConfig ConsoleColors { get; set; }
+    public Dictionary<MonitorColorScheme, Dictionary<ConsoleLogLevel, ConsoleColor>> ConsoleColorSchemes { get; set; }
 
     /// <summary>Whether to prevent mods from enabling Harmony's debug mode, which impacts performance and creates a file on your desktop. Debug mode should never be enabled by a released mod.</summary>
     public bool SuppressHarmonyDebugMode { get; set; }
@@ -131,7 +134,8 @@ internal class SConfig
     /// <param name="useCaseInsensitivePaths"><inheritdoc cref="UseCaseInsensitivePaths" path="/summary" /></param>
     /// <param name="logNetworkTraffic"><inheritdoc cref="LogNetworkTraffic" path="/summary" /></param>
     /// <param name="logTechnicalDetailsForBrokenMods"><inheritdoc cref="LogTechnicalDetailsForBrokenMods" path="/summary" /></param>
-    /// <param name="consoleColors"><inheritdoc cref="ConsoleColors" path="/summary" /></param>
+    /// <param name="consoleColorScheme"><inheritdoc cref="ConsoleColorScheme" path="/summary" /></param>
+    /// <param name="consoleColorSchemes"><inheritdoc cref="ConsoleColorSchemes" path="/summary" /></param>
     /// <param name="suppressHarmonyDebugMode"><inheritdoc cref="SuppressHarmonyDebugMode" path="/summary" /></param>
     /// <param name="suppressUpdateChecks"><inheritdoc cref="SuppressUpdateChecks" path="/summary" /></param>
     /// <param name="modsToLoadEarly"><inheritdoc cref="ModsToLoadEarly" path="/summary" /></param>
@@ -153,7 +157,8 @@ internal class SConfig
         bool? useCaseInsensitivePaths,
         bool? logNetworkTraffic,
         bool? logTechnicalDetailsForBrokenMods,
-        ColorSchemeConfig consoleColors,
+        MonitorColorScheme consoleColorScheme,
+        Dictionary<MonitorColorScheme, Dictionary<ConsoleLogLevel, ConsoleColor>>? consoleColorSchemes,
         bool? suppressHarmonyDebugMode,
         string[]? suppressUpdateChecks,
         string[]? modsToLoadEarly,
@@ -176,7 +181,8 @@ internal class SConfig
         this.UseCaseInsensitivePaths = useCaseInsensitivePaths ?? (bool)SConfig.DefaultValues[nameof(this.UseCaseInsensitivePaths)];
         this.LogNetworkTraffic = logNetworkTraffic ?? (bool)SConfig.DefaultValues[nameof(this.LogNetworkTraffic)];
         this.LogTechnicalDetailsForBrokenMods = logTechnicalDetailsForBrokenMods ?? (bool)SConfig.DefaultValues[nameof(this.LogTechnicalDetailsForBrokenMods)];
-        this.ConsoleColors = consoleColors;
+        this.ConsoleColorScheme = consoleColorScheme;
+        this.ConsoleColorSchemes = consoleColorSchemes ?? [];
         this.SuppressHarmonyDebugMode = suppressHarmonyDebugMode ?? (bool)SConfig.DefaultValues[nameof(this.SuppressHarmonyDebugMode)];
         this.SuppressUpdateChecks = new HashSet<string>(suppressUpdateChecks ?? [], StringComparer.OrdinalIgnoreCase);
         this.ModsToLoadEarly = new HashSet<string>(modsToLoadEarly ?? [], StringComparer.OrdinalIgnoreCase);

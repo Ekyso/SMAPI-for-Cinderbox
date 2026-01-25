@@ -47,18 +47,19 @@ internal class LogManager : IDisposable
     ****/
     /// <summary>Construct an instance.</summary>
     /// <param name="logPath">The log file path to write.</param>
+    /// <param name="colorSchemeId">The color scheme ID in <paramref name="colorConfig"/> to use, or <see cref="MonitorColorScheme.AutoDetect"/> to select one automatically.</param>
     /// <param name="colorConfig">The colors to use for text written to the SMAPI console.</param>
     /// <param name="writeToConsole">Whether to output log messages to the console.</param>
     /// <param name="verboseLogging">The log contexts for which to enable verbose logging, which may show a lot more information to simplify troubleshooting.</param>
     /// <param name="isDeveloperMode">Whether to enable full console output for developers.</param>
     /// <param name="getScreenIdForLog">Get the screen ID that should be logged to distinguish between players in split-screen mode, if any.</param>
-    public LogManager(string logPath, ColorSchemeConfig colorConfig, bool writeToConsole, HashSet<string> verboseLogging, bool isDeveloperMode, Func<int?> getScreenIdForLog)
+    public LogManager(string logPath, MonitorColorScheme colorSchemeId, Dictionary<MonitorColorScheme, Dictionary<ConsoleLogLevel, ConsoleColor>> colorConfig, bool writeToConsole, HashSet<string> verboseLogging, bool isDeveloperMode, Func<int?> getScreenIdForLog)
     {
         // init log file
         this.LogFile = new LogFileManager(logPath);
 
         // init monitor
-        this.GetMonitorImpl = (id, name) => new Monitor(id, name, this.LogFile, colorConfig, verboseLogging.Contains("*") || verboseLogging.Contains(id), getScreenIdForLog)
+        this.GetMonitorImpl = (id, name) => new Monitor(id, name, this.LogFile, colorSchemeId, colorConfig, verboseLogging.Contains("*") || verboseLogging.Contains(id), getScreenIdForLog)
         {
             WriteToConsole = writeToConsole,
             ShowTraceInConsole = isDeveloperMode,
