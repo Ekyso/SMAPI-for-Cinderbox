@@ -444,6 +444,25 @@ internal class SCore : IDisposable
             Constants.ApiBlacklistActualPath = Constants.ApiBlacklistPath;
         }
 
+        // check for malicious loose files
+        this.Monitor.Log("Scanning for malicious files...");
+        {
+            bool foundMaliciousFiles = false;
+
+            foreach ((string filePath, LooseFileBlacklistEntryModel match) in modBlacklist.CheckLooseFiles(this.ModsPath))
+            {
+                foundMaliciousFiles = true;
+
+                this.Monitor.LogFatal("Malicious mod file detected.");
+                this.Monitor.Log($"File path: '{filePath}'", LogLevel.Error);
+                this.Monitor.Newline();
+                this.Monitor.Log(match.Message ?? "This file has been flagged as malicious. You should immediately delete the mod containing the file, and perform a full anti-malware scan of your computer to be safe.", LogLevel.Error);
+            }
+
+            if (foundMaliciousFiles)
+                this.LogManager.PressAnyKeyToExit();
+        }
+
         // load mods
         {
             this.Monitor.Log("Loading mod metadata...", LogLevel.Debug);
@@ -743,7 +762,7 @@ internal class SCore : IDisposable
             // conflict (e.g. collection changed during enumeration errors) and data may change
             // unexpectedly from one mod instruction to the next.
             //
-            // Therefore we can just run Game1.Update here without raising any SMAPI events. There's
+            // Therefore, we can just run Game1.Update here without raising any SMAPI events. There's
             // a small chance that the task will finish after we defer but before the game checks,
             // which means technically events should be raised, but the effects of missing one
             // update tick are negligible and not worth the complications of bypassing Game1.Update.

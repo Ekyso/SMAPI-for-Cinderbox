@@ -2,18 +2,10 @@
 
 # Release notes
 ## Upcoming release
-**SMAPI release builds are automated on GitHub** (thanks to DecidedlyHuman!).
-
-The main benefits include...
-- Significantly improved security:
-  - This eliminates the risk of hidden malware infecting SMAPI releases.
-  - When downloading a release, you can compare the download's file hash against the GitHub build to
-    guarantee that (a) it was compiled from the code on GitHub and (b) it has not been tampered with.
-- You can now download a preview of the next SMAPI release at any time, since every commit produces an alpha build.
-
-This is also a big step towards future improvements, like...
-- signing builds to reduce antivirus alerts on Windows and macOS;
-- and automating mod builds too.
+* For players:
+  * SMAPI now uses [automated and attested builds](https://www.patreon.com/posts/automated-builds-148417912) (thanks to DecidedlyHuman)!  
+    _This improves the security and transparency of SMAPI builds. Every step to build SMAPI from the public source code is now public and verifiable, with file signatures to let players and tools confirm the build hasn't been tampered with._
+  * SMAPI can now detect known malicious loose files in the `Mods` folder.
 
 ## 4.4.0
 Released 10 January 2026 for Stardew Valley 1.6.14 or later. See [release highlights](https://www.patreon.com/posts/147916705).
