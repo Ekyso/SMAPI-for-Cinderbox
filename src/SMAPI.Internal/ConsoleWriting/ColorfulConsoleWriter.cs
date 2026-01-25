@@ -11,12 +11,15 @@ internal class ColorfulConsoleWriter : IConsoleWriter
     /*********
     ** Fields
     *********/
+    /// <summary>The target platform.</summary>
+    private readonly Platform Platform;
+
     /// <summary>The console text color for each log level.</summary>
-    private readonly IDictionary<ConsoleLogLevel, ConsoleColor>? Colors;
+    private IDictionary<ConsoleLogLevel, ConsoleColor>? Colors;
 
     /// <summary>Whether the current console supports color formatting.</summary>
     [MemberNotNullWhen(true, nameof(ColorfulConsoleWriter.Colors))]
-    private bool SupportsColor { get; }
+    private bool SupportsColor { get; set; }
 
 
     /*********
@@ -33,6 +36,16 @@ internal class ColorfulConsoleWriter : IConsoleWriter
     /// <param name="colorConfig">The colors to use for text written to the SMAPI console.</param>
     public ColorfulConsoleWriter(Platform platform, MonitorColorScheme colorSchemeId, Dictionary<MonitorColorScheme, Dictionary<ConsoleLogLevel, ConsoleColor>> colorConfig)
     {
+        this.Platform = platform;
+
+        this.SetColors(colorSchemeId, colorConfig);
+    }
+
+    /// <summary>Set the color scheme to apply.</summary>
+    /// <param name="colorSchemeId">The color scheme ID in <paramref name="colorSchemes"/> to use, or <see cref="MonitorColorScheme.AutoDetect"/> to select one automatically.</param>
+    /// <param name="colorSchemes">The colors to use for text written to the SMAPI console.</param>
+    public void SetColors(MonitorColorScheme colorSchemeId, Dictionary<MonitorColorScheme, Dictionary<ConsoleLogLevel, ConsoleColor>> colorSchemes)
+    {
         if (colorSchemeId == MonitorColorScheme.None)
         {
             this.SupportsColor = false;
@@ -41,7 +54,7 @@ internal class ColorfulConsoleWriter : IConsoleWriter
         else
         {
             this.SupportsColor = this.TestColorSupport();
-            this.Colors = this.GetConsoleColorScheme(platform, colorSchemeId, colorConfig);
+            this.Colors = ColorfulConsoleWriter.GetConsoleColorScheme(this.Platform, colorSchemeId, colorSchemes);
         }
     }
 
@@ -123,7 +136,7 @@ internal class ColorfulConsoleWriter : IConsoleWriter
     /// <param name="platform">The target platform.</param>
     /// <param name="colorSchemeId">The color scheme ID in <paramref name="colorConfig"/> to use, or <see cref="MonitorColorScheme.AutoDetect"/> to select one automatically.</param>
     /// <param name="colorConfig">The colors to use for text written to the SMAPI console.</param>
-    private IDictionary<ConsoleLogLevel, ConsoleColor> GetConsoleColorScheme(Platform platform, MonitorColorScheme colorSchemeId, Dictionary<MonitorColorScheme, Dictionary<ConsoleLogLevel, ConsoleColor>> colorConfig)
+    private static IDictionary<ConsoleLogLevel, ConsoleColor> GetConsoleColorScheme(Platform platform, MonitorColorScheme colorSchemeId, Dictionary<MonitorColorScheme, Dictionary<ConsoleLogLevel, ConsoleColor>> colorConfig)
     {
         // get color scheme ID
         if (colorSchemeId == MonitorColorScheme.AutoDetect)

@@ -45,8 +45,9 @@ in future SMAPI versions.
     "CheckContentIntegrity": true,
 
     /**
-     * Whether to enable features intended for mod developers. Currently this only makes TRACE-level
-     * messages appear in the console.
+     * Whether to show much more info in the SMAPI consoler window, intended for mod developers.
+     *
+     * Not recommended for most players.
      */
     "DeveloperMode": true,
 

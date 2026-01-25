@@ -28,6 +28,12 @@ internal class LogManager : IDisposable
     /// <summary>Create a monitor instance given the ID and name.</summary>
     private readonly Func<string, string, Monitor> GetMonitorImpl;
 
+    /// <summary>The console writer which sends color-coded text to the console.</summary>
+    private readonly ColorfulConsoleWriter ConsoleWriter;
+
+    /// <summary>The monitors managed by SMAPI.</summary>
+    private readonly List<Monitor> Monitors = [];
+
 
     /*********
     ** Accessors
@@ -59,12 +65,9 @@ internal class LogManager : IDisposable
         this.LogFile = new LogFileManager(logPath);
 
         // init monitor
-        this.GetMonitorImpl = (id, name) => new Monitor(id, name, this.LogFile, colorSchemeId, colorConfig, verboseLogging.Contains("*") || verboseLogging.Contains(id), getScreenIdForLog)
-        {
-            WriteToConsole = writeToConsole,
-            ShowTraceInConsole = isDeveloperMode,
-            ShowFullStampInConsole = isDeveloperMode
-        };
+        this.ConsoleWriter = new ColorfulConsoleWriter(Constants.Platform, colorSchemeId, colorConfig);
+        this.GetMonitorImpl = (id, name) => this.CreateAndRegisterMonitor(id, name, verboseLogging, getScreenIdForLog, writeToConsole, isDeveloperMode);
+
         this.Monitor = this.GetMonitor("SMAPI", "SMAPI");
         this.MonitorForGame = this.GetMonitor("game", "game");
 
@@ -89,6 +92,19 @@ internal class LogManager : IDisposable
     public void SetConsoleTitle(string title)
     {
         Console.Title = title;
+    }
+
+    /// <summary>Apply the SMAPI settings to the log manager and its managed monitors.</summary>
+    /// <param name="colorSchemeId">The color scheme ID in <paramref name="colorSchemes"/> to use, or <see cref="MonitorColorScheme.AutoDetect"/> to select one automatically.</param>
+    /// <param name="colorSchemes">The colors to use for text written to the SMAPI console.</param>
+    /// <param name="verboseLogging">The log contexts for which to enable verbose logging, which may show a lot more information to simplify troubleshooting.</param>
+    /// <param name="isDeveloperMode">Whether to enable full console output for developers.</param>
+    public void ApplySettings(MonitorColorScheme colorSchemeId, Dictionary<MonitorColorScheme, Dictionary<ConsoleLogLevel, ConsoleColor>> colorSchemes, HashSet<string> verboseLogging, bool isDeveloperMode)
+    {
+        foreach (Monitor monitor in this.Monitors)
+            this.ApplySettings(monitor, verboseLogging, isDeveloperMode);
+
+        this.ConsoleWriter.SetColors(colorSchemeId, colorSchemes);
     }
 
     /****
@@ -333,6 +349,38 @@ internal class LogManager : IDisposable
     /*********
     ** Protected methods
     *********/
+    /// <summary>Create and register a monitor instance.</summary>
+    /// <param name="modId">The mod ID, if applicable.</param>
+    /// <param name="source">The name of the module which logs messages using this instance.</param>
+    /// <param name="verboseLogging">The log contexts for which to enable verbose logging, which may show a lot more information to simplify troubleshooting.</param>
+    /// <param name="getScreenIdForLog">Get the screen ID that should be logged to distinguish between players in split-screen mode, if any.</param>
+    /// <param name="writeToConsole">Whether to write anything to the console. This should be disabled if no console is available.</param>
+    /// <param name="isDeveloperMode">Whether to enable full console output for developers.</param>
+    private Monitor CreateAndRegisterMonitor(string modId, string source, HashSet<string> verboseLogging, Func<int?> getScreenIdForLog, bool writeToConsole, bool isDeveloperMode)
+    {
+        Monitor monitor = new(modId, source, this.LogFile, this.ConsoleWriter, getScreenIdForLog)
+        {
+            WriteToConsole = writeToConsole
+        };
+
+        this.ApplySettings(monitor, verboseLogging, isDeveloperMode);
+
+        this.Monitors.Add(monitor);
+
+        return monitor;
+    }
+
+    /// <summary>Apply the SMAPI settings to a managed monitor.</summary>
+    /// <param name="monitor">The monitor to update.</param>
+    /// <param name="verboseLogging">The log contexts for which to enable verbose logging, which may show a lot more information to simplify troubleshooting.</param>
+    /// <param name="isDeveloperMode">Whether to enable full console output for developers.</param>
+    private void ApplySettings(Monitor monitor, HashSet<string> verboseLogging, bool isDeveloperMode)
+    {
+        monitor.IsVerbose = verboseLogging.Contains("*") || verboseLogging.Contains(monitor.ModId);
+        monitor.ShowTraceInConsole = isDeveloperMode;
+        monitor.ShowFullStampInConsole = isDeveloperMode;
+    }
+
     /// <summary>Write a summary of mod warnings to the console and log.</summary>
     /// <param name="mods">The loaded mods.</param>
     /// <param name="skippedMods">The mods which could not be loaded.</param>

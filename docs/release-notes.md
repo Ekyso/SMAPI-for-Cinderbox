@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * For players:
+  * Added in-game config UI via [Generic Mod Config Menu](<https://www.nexusmods.com/stardewvalley/mods/5098>).
   * SMAPI now uses [automated and attested builds](https://www.patreon.com/posts/automated-builds-148417912) (thanks to DecidedlyHuman)!  
     _This improves the security and transparency of SMAPI builds. Every step to build SMAPI from the public source code is now public and verifiable, with file signatures to let players and tools confirm the build hasn't been tampered with._
   * SMAPI can now detect known malicious loose files in the `Mods` folder.
