@@ -283,7 +283,7 @@ foreach ($folder in $folders) {
 ###########
 Move-Item "$packagePath" "bin/SMAPI $version installer"
 
-Compress-Archive -Path "bin/SMAPI $version installer" -DestinationPath "bin/SMAPI $version installer.zip" -CompressionLevel Optimal
+Compress-Archive -Path "bin/SMAPI $version installer" -DestinationPath "bin/SMAPI-$version-installer.zip" -CompressionLevel Optimal
 
 Write-Output ""
 Write-Output "Done! Package created in ${pwd.Path}/bin."

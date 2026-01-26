@@ -87,9 +87,6 @@ jobs:
                     Write-Host "Building SMAPI $env:VERSION."
                     ./build/scripts/prepare-install-package.ps1 "$env:VERSION"
 
-            -   name: Rename build zip
-                run: mv "bin/SMAPI ${{env.VERSION}} installer.zip" "bin/SMAPI-${{env.VERSION}}-installer.zip"
-
             -   name: Upload installer
                 uses: actions/upload-artifact@v4
                 with:
@@ -101,10 +98,10 @@ jobs:
                 uses: ncipollo/release-action@v1
                 if: github.ref_type == 'tag'
                 with:
-                    artifacts: 'bin/SMAPI-${{env.VERSION}}*.zip'
+                    artifacts: 'bin/SMAPI-${{env.VERSION}}-installer.zip'
                     token: '${{secrets.GITHUB_TOKEN}}'
                     tag: '${{github.ref_name}}'
-                    name: "${{env.VERSION}}"
+                    name: '${{env.VERSION}}'
                     body: |
                         Draft.
                     draft: true
