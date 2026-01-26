@@ -2,7 +2,7 @@
 
 # Release notes
 ## 4.5.1
-Released 25 January 2026 for Stardew Valley 1.6.14 or later.
+Released 25 January 2026 for Stardew Valley 1.6.14 or later. See [build attestation](https://github.com/Pathoschild/SMAPI/attestations/17385144).
 
 * For players:
   * Fixed error installing SMAPI 4.5.0 on Linux/macOS.
