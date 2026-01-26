@@ -2,7 +2,7 @@
 
 # Release notes
 ## 4.5.0
-Released 25 January 2026 for Stardew Valley 1.6.14 or later. See [release highlights](https://www.patreon.com/posts/149054246).
+Released 25 January 2026 for Stardew Valley 1.6.14 or later. See [release highlights](https://www.patreon.com/posts/149054246) and [build attestation](https://github.com/Pathoschild/SMAPI/attestations/17379361).
 
 * For players:
   * Added in-game config UI for SMAPI via [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098).
