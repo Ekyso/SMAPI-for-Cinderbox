@@ -55,9 +55,6 @@ internal class GamePadStateBuilder : IInputStateBuilder<GamePadStateBuilder, Gam
         this.State = state;
         this.IsConnected = state.IsConnected;
 
-        if (!this.IsConnected)
-            return;
-
         GamePadDPad pad = state.DPad;
         GamePadButtons buttons = state.Buttons;
         GamePadTriggers triggers = state.Triggers;
@@ -90,9 +87,6 @@ internal class GamePadStateBuilder : IInputStateBuilder<GamePadStateBuilder, Gam
     /// <inheritdoc />
     public GamePadStateBuilder OverrideButtons(IDictionary<SButton, SButtonState> overrides)
     {
-        if (!this.IsConnected)
-            return this;
-
         foreach (var pair in overrides)
         {
             bool changed = true;
@@ -155,9 +149,6 @@ internal class GamePadStateBuilder : IInputStateBuilder<GamePadStateBuilder, Gam
     /// <inheritdoc />
     public IEnumerable<SButton> GetPressedButtons()
     {
-        if (!this.IsConnected)
-            yield break;
-
         // buttons
         foreach (Buttons button in this.GetPressedGamePadButtons())
             yield return button.ToSButton();
@@ -213,9 +204,6 @@ internal class GamePadStateBuilder : IInputStateBuilder<GamePadStateBuilder, Gam
     /// <summary>Get the pressed gamepad buttons.</summary>
     private IEnumerable<Buttons> GetPressedGamePadButtons()
     {
-        if (!this.IsConnected)
-            yield break;
-
         foreach (var pair in this.ButtonStates)
         {
             if (pair.Value == ButtonState.Pressed && pair.Key.TryGetController(out Buttons button))
