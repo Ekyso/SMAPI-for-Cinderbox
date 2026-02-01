@@ -29,6 +29,15 @@ internal sealed class SInputState : InputState
     /// <summary>Whether there are new overrides in <see cref="CustomPressedKeys"/> or <see cref="CustomReleasedKeys"/> that haven't been applied to the previous state.</summary>
     private bool HasNewOverrides;
 
+    /// <summary>The builder which reads the game pad state and applies overrides.</summary>
+    private readonly GamePadStateBuilder ControllerStateBuilder = new();
+
+    /// <summary>The builder which reads the keyboard state and applies overrides.</summary>
+    private readonly KeyboardStateBuilder KeyboardStateBuilder = new();
+
+    /// <summary>The builder which reads the mouse state and applies overrides.</summary>
+    private readonly MouseStateBuilder MouseStateBuilder = new();
+
 
     /*********
     ** Accessors
@@ -68,10 +77,15 @@ internal sealed class SInputState : InputState
         {
             float zoomMultiplier = (1f / Game1.options.zoomLevel);
 
+            // get builders
+            GamePadStateBuilder controller = this.ControllerStateBuilder;
+            KeyboardStateBuilder keyboard = this.KeyboardStateBuilder;
+            MouseStateBuilder mouse = this.MouseStateBuilder;
+
             // get real values
-            var controller = new GamePadStateBuilder(base.GetGamePadState());
-            var keyboard = new KeyboardStateBuilder(base.GetKeyboardState());
-            var mouse = new MouseStateBuilder(base.GetMouseState());
+            controller.Reset(base.GetGamePadState());
+            keyboard.Reset(base.GetKeyboardState());
+            mouse.Reset(base.GetMouseState());
             Vector2 cursorAbsolutePos = new((mouse.X * zoomMultiplier) + Game1.viewport.X, (mouse.Y * zoomMultiplier) + Game1.viewport.Y);
             Vector2? playerTilePos = Context.IsPlayerFree ? Game1.player.Tile : null;
             HashSet<SButton> reallyDown = new(this.GetPressedButtons(keyboard, mouse, controller));
@@ -159,9 +173,13 @@ internal sealed class SInputState : InputState
     {
         if (this.HasNewOverrides)
         {
-            var controller = new GamePadStateBuilder(this.ControllerState);
-            var keyboard = new KeyboardStateBuilder(this.KeyboardState);
-            var mouse = new MouseStateBuilder(this.MouseState);
+            GamePadStateBuilder controller = this.ControllerStateBuilder;
+            KeyboardStateBuilder keyboard = this.KeyboardStateBuilder;
+            MouseStateBuilder mouse = this.MouseStateBuilder;
+
+            controller.Reset(this.ControllerState);
+            keyboard.Reset(this.KeyboardState);
+            mouse.Reset(this.MouseState);
 
             if (this.ApplyOverrides(pressed: this.CustomPressedKeys, released: this.CustomReleasedKeys, controller, keyboard, mouse))
             {
