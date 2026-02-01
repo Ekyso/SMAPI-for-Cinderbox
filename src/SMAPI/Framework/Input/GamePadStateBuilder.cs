@@ -37,13 +37,6 @@ internal class GamePadStateBuilder : IInputStateBuilder<GamePadStateBuilder, Gam
 
 
     /*********
-    ** Accessors
-    *********/
-    /// <summary>Whether the gamepad is currently connected.</summary>
-    public bool IsConnected { get; }
-
-
-    /*********
     ** Public methods
     *********/
     /// <summary>Construct an instance.</summary>
@@ -51,9 +44,8 @@ internal class GamePadStateBuilder : IInputStateBuilder<GamePadStateBuilder, Gam
     public GamePadStateBuilder(GamePadState state)
     {
         this.State = state;
-        this.IsConnected = state.IsConnected;
 
-        if (this.IsConnected)
+        if (state.IsConnected)
         {
             GamePadDPad pad = state.DPad;
             GamePadButtons buttons = state.Buttons;
