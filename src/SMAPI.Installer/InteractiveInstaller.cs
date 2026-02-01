@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json.Linq;
 using StardewModdingApi.Installer.Enums;
 using StardewModdingAPI.Installer.Framework;
 using StardewModdingAPI.Internal.ConsoleWriting;
@@ -13,6 +14,7 @@ using StardewModdingAPI.Toolkit;
 using StardewModdingAPI.Toolkit.Framework;
 using StardewModdingAPI.Toolkit.Framework.GameScanning;
 using StardewModdingAPI.Toolkit.Framework.ModScanning;
+using StardewModdingAPI.Toolkit.Serialization;
 using StardewModdingAPI.Toolkit.Utilities;
 
 namespace StardewModdingApi.Installer;
@@ -501,10 +503,10 @@ internal class InteractiveInstaller
                 // set SMAPI's color scheme if defined
                 if (scheme != MonitorColorScheme.AutoDetect)
                 {
-                    string text = File
-                        .ReadAllText(paths.ApiConfigPath)
-                        .Replace(@"""UseScheme"": ""AutoDetect""", $@"""UseScheme"": ""{scheme}""");
-                    File.WriteAllText(paths.ApiConfigPath, text);
+                    this.SaveUserSettings(paths.ApiUserConfigPath, new Dictionary<string, object>
+                    {
+                        ["ConsoleColorScheme"] = scheme.ToString()
+                    });
                 }
             }
         }
@@ -557,6 +559,33 @@ internal class InteractiveInstaller
             default:
                 return scheme.ToString();
         }
+    }
+
+    /// <summary>Save the given options to a SMAPI internal config file.</summary>
+    /// <param name="filePath">The file path to edit.</param>
+    /// <param name="settings">The settings to add or overwrite.</param>
+    [SuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "This isn't an issue here, since we're only using JToken and object.")]
+    private void SaveUserSettings(string filePath, Dictionary<string, object> settings)
+    {
+        JsonHelper jsonHelper = new();
+
+        // merge into existing settings
+        Dictionary<string, JToken> saveSettings = settings.ToDictionary(p => p.Key, p => JToken.FromObject(p.Value));
+        try
+        {
+            if (jsonHelper.ReadJsonFileIfExists(filePath, out Dictionary<string, JToken>? fileSettings))
+            {
+                foreach ((string key, JToken value) in fileSettings)
+                    saveSettings.TryAdd(key, value);
+            }
+        }
+        catch (Exception ex)
+        {
+            this.PrintWarning($"Couldn't parse your SMAPI settings file. Replacing it with a default version.\n\nTechnical details:\n{ex}");
+        }
+
+        // save file
+        jsonHelper.WriteJsonFile(filePath, saveSettings);
     }
 
     /// <summary>Print a message without formatting.</summary>

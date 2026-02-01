@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * For players:
+  * Fixed the Linux/macOS installer not saving the color scheme correctly in 4.5.0+.
   * Fixed typo in config UI text (thanks to QuentiumYT!).
   * Improved translations. Thanks to dewanggatrustha (updated Indonesian), QuentiumYT (updated French), and  Timur13240
  (updated Russian)!
