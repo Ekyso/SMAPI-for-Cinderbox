@@ -94,18 +94,6 @@ jobs:
                     path: 'bin/SMAPI-${{env.VERSION}}-installer.zip'
                     if-no-files-found: 'error'
 
-            -   name: Create GitHub release
-                uses: ncipollo/release-action@v1
-                if: github.ref_type == 'tag'
-                with:
-                    artifacts: 'bin/SMAPI-${{env.VERSION}}-installer.zip'
-                    token: '${{secrets.GITHUB_TOKEN}}'
-                    tag: '${{github.ref_name}}'
-                    name: '${{env.VERSION}}'
-                    body: |
-                        Draft.
-                    draft: true
-
             -   name: Generate artifact attestations
                 uses: actions/attest-build-provenance@v2
                 if: github.ref_type == 'tag'
