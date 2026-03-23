@@ -1332,7 +1332,7 @@ internal class SCore : IDisposable
             /*********
             ** Execute commands
             *********/
-            if (this.ScreenCommandQueue.Value.Any())
+            if (this.ScreenCommandQueue.Value.Count > 0)
             {
                 var commandQueue = this.ScreenCommandQueue.Value;
                 foreach ((Command? command, string? name, string[]? args) in commandQueue)
@@ -1627,7 +1627,8 @@ internal class SCore : IDisposable
                         }
 
                         // raise input button events
-                        if (inputState.ButtonStates.Count > 0)
+                        IReadOnlyDictionary<SButton, SButtonState> buttonStates = inputState.GetActiveButtonStates();
+                        if (buttonStates.Count > 0)
                         {
                             if (events.ButtonsChanged.HasListeners)
                                 events.ButtonsChanged.Raise(
@@ -1640,9 +1641,7 @@ internal class SCore : IDisposable
 
                             if (logInput || raisePressed || raiseReleased)
                             {
-                                foreach (
-                                    (SButton button, SButtonState status) in inputState.ButtonStates
-                                )
+                                foreach ((SButton button, SButtonState status) in buttonStates)
                                 {
                                     switch (status)
                                     {
@@ -3696,6 +3695,12 @@ internal class SCore : IDisposable
                 errorReasonPhrase =
                     $"{reason}. Please check for a new version at {string.Join(" or ", updateUrls)}";
                 failReason = ModFailReason.Incompatible;
+                return false;
+            }
+            catch (FileLoadException ex) when (ex.Message.Contains("0x800711C7"))
+            {
+                errorReasonPhrase = "it was blocked by Windows Smart App Control (usually not a problem with the mod itself)";
+                failReason = ModFailReason.LoadFailed;
                 return false;
             }
             catch (SAssemblyLoadFailedException ex)
